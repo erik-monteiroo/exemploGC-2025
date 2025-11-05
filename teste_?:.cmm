@@ -1,0 +1,19 @@
+$TRACE_OFF
+
+int a;
+int b;
+int c;
+
+void main() {
+    a = 10;
+    b = 2;
+    c = 0;
+
+    a == 10 ? c = -1 : c = -2;
+
+    write("a: ", a);
+    write("b: ", b);
+    write("c: ", c);
+}
+
+

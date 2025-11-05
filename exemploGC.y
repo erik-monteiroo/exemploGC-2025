@@ -10,6 +10,7 @@
 %token WHILE,TRUE, FALSE, IF, ELSE
 %token EQ, LEQ, GEQ, NEQ 
 %token AND, OR
+%token PLUSPLUS, MINUSMINUS, PLUSEQUAL
 
 %right '='
 %left OR
@@ -18,12 +19,12 @@
 %left '+' '-'
 %left '*' '/' '%'
 %left '!' 
+%nonassoc '++' '--' '+='
 
 %type <sval> ID
 %type <sval> LIT
 %type <sval> NUM
 %type <ival> type
-
 
 %%
 
@@ -50,9 +51,7 @@ lcmd : lcmd cmd
 	   |
 	   ;
 	   
-cmd :  ID '=' exp	';' {  System.out.println("\tPOPL %EDX");
-  						   System.out.println("\tMOVL %EDX, _"+$1);
-					     }
+cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 			| '{' lcmd '}' { System.out.println("\t\t# terminou o bloco..."); }
 					     
 					       
@@ -137,7 +136,7 @@ restoIf : ELSE  {
 exp :  NUM  { System.out.println("\tPUSHL $"+$1); } 
     |  TRUE  { System.out.println("\tPUSHL $1"); } 
     |  FALSE  { System.out.println("\tPUSHL $0"); }      
- 		| ID   { System.out.println("\tPUSHL _"+$1); }
+    | ID   { System.out.println("\tPUSHL _"+$1); }
     | '(' exp	')' 
     | '!' exp       { gcExpNot(); }
      
@@ -155,8 +154,64 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 		| exp NEQ exp		{ gcExpRel(NEQ); }											
 												
 		| exp OR exp		{ gcExpLog(OR); }											
-		| exp AND exp		{ gcExpLog(AND); }											
-		
+		| exp AND exp		{ gcExpLog(AND); }		
+											
+	    | PLUSPLUS ID {
+					System.out.println("\tPUSHL _" + $2);
+					System.out.println("\tPUSHL $1"); 
+					gcExpArit('+');
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tMOVL %EDX, _" + $2);
+					System.out.println("\tPUSHL %EDX"); 
+				}
+		| ID PLUSPLUS {
+					System.out.println("\tPUSHL _" + $1);
+					System.out.println("\tPUSHL $1"); 
+					gcExpArit('+');
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tMOVL %EDX, _" + $1);
+					System.out.println("\tPUSHL %EDX"); 
+				}
+
+		| MINUSMINUS ID {
+					System.out.println("\tPUSHL _" + $2);
+					System.out.println("\tPUSHL $1"); 
+					gcExpArit('-');
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tMOVL %EDX, _" + $2);
+					System.out.println("\tPUSHL %EDX"); 
+				}
+		| ID MINUSMINUS {
+					System.out.println("\tPUSHL _" + $1);
+					System.out.println("\tPUSHL $1"); 
+					gcExpArit('-');
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tMOVL %EDX, _" + $1);
+					System.out.println("\tPUSHL %EDX"); 
+				}
+
+		| ID '=' exp	{  
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tPUSHL %EDX");
+  					System.out.println("\tMOVL %EDX, _"+$1);
+				}
+		// a += b; -> a = a + b;
+		| ID PLUSEQUAL exp	{  
+					System.out.println("\tPUSHL _" + $1);
+					gcExpArit('+');
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tMOVL %EDX, _" + $1);
+					System.out.println("\tPUSHL %EDX"); 
+				}
+		// a == 10 ? b = -5 : b = -10;
+		// if (a == 10) { b = -5; } else { b = -10; }
+		| ID PLUSEQUAL exp	{  
+					System.out.println("\tPUSHL _" + $1);
+					gcExpArit('+');
+					System.out.println("\tPOPL %EDX");
+					System.out.println("\tMOVL %EDX, _" + $1);
+					System.out.println("\tPUSHL %EDX"); 
+				}
 		;							
 
 
