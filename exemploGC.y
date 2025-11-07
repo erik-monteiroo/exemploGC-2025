@@ -7,12 +7,14 @@
  
 
 %token ID, INT, FLOAT, BOOL, NUM, LIT, VOID, MAIN, READ, WRITE, IF, ELSE
-%token WHILE,TRUE, FALSE, IF, ELSE
+%token WHILE,TRUE, FALSE, IF, ELSE, DO, FOR
 %token EQ, LEQ, GEQ, NEQ 
 %token AND, OR
 %token PLUSPLUS, MINUSMINUS, PLUSEQUAL
 
-%right '='
+%right '=' 
+%right '?' ':'
+
 %left OR
 %left AND
 %left  '>' '<' EQ LEQ GEQ NEQ
@@ -101,36 +103,91 @@ cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 							System.out.printf("rot_%02d:\n",(int)pRot.peek()+1);
 							pRot.pop();
 							}  
-							
-			| IF '(' exp {	
-											pRot.push(proxRot);  proxRot += 2;
-															
-											System.out.println("\tPOPL %EAX");
-											System.out.println("\tCMPL $0, %EAX");
-											System.out.printf("\tJE rot_%02d\n", pRot.peek());
-										}
-								')' cmd 
 
-             restoIf {
-											System.out.printf("rot_%02d:\n",pRot.peek()+1);
-											pRot.pop();
-										}
-     ;
-     
-     
+	| DO {
+			pRot.push(proxRot);  proxRot += 2; 
+			System.out.printf("rot_%02d:\n", pRot.peek());
+			}
+		cmd
+		WHILE '(' exp ')' ';'
+			{
+			System.out.println("\tPOPL %EAX    # desvia se falso...");
+			System.out.println("\tCMPL $0, %EAX");
+			System.out.printf("\tJNE rot_%02d\n", (int)pRot.peek()); // volta
+			pRot.pop();
+			}
+	| FOR '('{
+		pRot.push(proxRot);  proxRot += 4; // pega o espaco
+		} 
+		
+		FORINICIO ';' { 
+			System.out.printf("rot_%02d:\n", pRot.peek()); 
+		}
+		
+		FORCONDICAO ';' {
+        	System.out.printf("\tJMP rot_%02d\n", pRot.peek()+3);  
+    		System.out.printf("rot_%02d:\n", pRot.peek()+2);       
+        }
+		
+		FORINCREMENTO {
+			System.out.printf("\tJMP rot_%02d\n", pRot.peek());    /* volta ao begin */
+         	System.out.printf("rot_%02d:\n", pRot.peek()+3); 
+		}
+		
+		')' cmd {
+			System.out.printf("\tJMP rot_%02d\n", pRot.peek()+2);  /* vai para post */
+        	System.out.printf("rot_%02d:\n", pRot.peek()+1);       /* end: */
+        	pRot.pop();
+		}
+
+	| IF '(' exp {	
+					pRot.push(proxRot);  proxRot += 2;
+									
+					System.out.println("\tPOPL %EAX");
+					System.out.println("\tCMPL $0, %EAX");
+					System.out.printf("\tJE rot_%02d\n", pRot.peek());
+				}
+		 ')' cmd 
+
+			restoIf {
+									System.out.printf("rot_%02d:\n",pRot.peek()+1);
+									pRot.pop();
+								}
+			;
+
 restoIf : ELSE  {
-											System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1);
-											System.out.printf("rot_%02d:\n",pRot.peek());
-								
-										} 							
-							cmd  
-							
-							
-		| {
-		    System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1);
-				System.out.printf("rot_%02d:\n",pRot.peek());
-				} 
-		;										
+						System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1);
+						System.out.printf("rot_%02d:\n",pRot.peek());
+			
+					} 							
+		cmd  				
+			| {
+				System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1);
+					System.out.printf("rot_%02d:\n",pRot.peek());
+					} 
+			;	
+
+FORINICIO : exp {
+			System.out.println("\tPOPL %EDX");
+			}	
+		  | 
+		  ;
+
+FORCONDICAO : exp {
+				System.out.println("\tPOPL %EAX");
+				System.out.println("\tCMPL $0, %EAX");
+				System.out.printf("\tJE rot_%02d\n", pRot.peek()+1); 
+				}
+			|
+			;
+
+FORINCREMENTO : exp { //acabou que era igual ao inicio kkkk
+					System.out.println("\tPOPL %EDX");
+					}	
+		      | 
+		      ;
+				
+												
 
 
 exp :  NUM  { System.out.println("\tPUSHL $"+$1); } 
@@ -195,6 +252,7 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 					System.out.println("\tPUSHL %EDX");
   					System.out.println("\tMOVL %EDX, _"+$1);
 				}
+
 		// a += b; -> a = a + b;
 		| ID PLUSEQUAL exp	{  
 					System.out.println("\tPUSHL _" + $1);
@@ -203,15 +261,26 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 					System.out.println("\tMOVL %EDX, _" + $1);
 					System.out.println("\tPUSHL %EDX"); 
 				}
+
 		// a == 10 ? b = -5 : b = -10;
+		// exp ? cmd : cmd
 		// if (a == 10) { b = -5; } else { b = -10; }
-		| ID PLUSEQUAL exp	{  
-					System.out.println("\tPUSHL _" + $1);
-					gcExpArit('+');
-					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $1);
-					System.out.println("\tPUSHL %EDX"); 
-				}
+		| exp {	
+					pRot.push(proxRot);  proxRot += 2; 			
+					System.out.println("\tPOPL %EAX"); //pega o resultado da primeira exp
+					System.out.println("\tCMPL $0, %EAX"); //verifica se é falso (igual a 0)
+					System.out.printf("\tJE rot_%02d\n", pRot.peek()); //se for pula pro segundo comando, se nao mantem a sequencia
+				} 
+			'?' exp { //se manteve a sequencia (foi verdadeiro)
+					System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1);
+					System.out.printf("rot_%02d:\n",pRot.peek());
+					}
+			':' exp { //se pulou pra ca (foi falso)
+			        System.out.println("\tPOPL %EAX");                       // EAX = valor_true
+					System.out.printf("rot_%02d:\n",pRot.peek()+1);
+			        System.out.println("\tPUSHL %EAX");         // **deixa o valor da exp na pilha**
+					pRot.pop();
+					}
 		;							
 
 

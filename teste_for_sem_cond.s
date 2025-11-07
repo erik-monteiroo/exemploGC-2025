@@ -7,89 +7,39 @@
 
 
 _start:
-	PUSHL $1
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _a
-	POPL %EDX
-	PUSHL $1
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _b
-	POPL %EDX
-	PUSHL _a
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _a
-	PUSHL %EDX
-	PUSHL _b
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _b
-	PUSHL %EDX
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _c
-	POPL %EDX
-	PUSHL _a
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _a
-	PUSHL %EDX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _a
-	POPL %EDX
-	PUSHL _b
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _b
-	PUSHL %EDX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _b
-	POPL %EDX
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
 	CALL _writeLit
-	PUSHL _a
-	POPL %EAX
-	CALL _write
 	CALL _writeln
+	PUSHL $0
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _i
+	POPL %EDX
+rot_01:
+	JMP rot_04
+rot_03:
+	PUSHL _i
+	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _i
+	POPL %EDX
+	JMP rot_01
+rot_04:
 	MOVL $_str_1Len, %EDX
 	MOVL $_str_1, %ECX
 	CALL _writeLit
-	PUSHL _b
+	PUSHL _i
 	POPL %EAX
 	CALL _write
 	CALL _writeln
-	MOVL $_str_2Len, %EDX
-	MOVL $_str_2, %ECX
-	CALL _writeLit
-	PUSHL _c
-	POPL %EAX
-	CALL _write
-	CALL _writeln
+	JMP rot_03
+rot_02:
 
 
 
@@ -182,9 +132,7 @@ _fimread2:
 #
 # variaveis globais
 #
-_a:	.zero 4
-_b:	.zero 4
-_c:	.zero 4
+_i:	.zero 4
 
 #
 # area de literais
@@ -196,11 +144,8 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii "FOR SEM CONDICAO - INFINITO"
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "b: "
+	 .ascii "i: "
 _str_1Len = . - _str_1
-_str_2:
-	 .ascii "c: "
-_str_2Len = . - _str_2

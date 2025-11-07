@@ -49,6 +49,8 @@ NL  = \n | \r | \r\n
 "{" |
 "}" |
 "," |
+"?" |
+":" |
 "\[" | 
 "\]"    { return (int) yycharat(0); }
 
@@ -76,6 +78,8 @@ main   { return Parser.MAIN; }
 write   { return Parser.WRITE; }
 read   { return Parser.READ; }
 while   { return Parser.WHILE; }
+do      {return Parser.DO;}
+for {return Parser.FOR;}
 if   { return Parser.IF; }
 else   { return Parser.ELSE; }
 true   { return Parser.TRUE; }
