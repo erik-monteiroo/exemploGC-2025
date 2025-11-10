@@ -30,76 +30,80 @@
 
   18  cmd : WRITE '(' LIT $$4 ',' exp ')' ';'
   19      | READ '(' ID ')' ';'
+  20      | BREAK ';'
+  21      | CONTINUE ';'
 
-  20  $$5 :
+  22  $$5 :
 
-  21  $$6 :
+  23  $$6 :
 
-  22  cmd : WHILE $$5 '(' exp ')' $$6 cmd
+  24  cmd : WHILE $$5 '(' exp ')' $$6 cmd
 
-  23  $$7 :
+  25  $$7 :
 
-  24  cmd : DO $$7 cmd WHILE '(' exp ')' ';'
+  26  $$8 :
 
-  25  $$8 :
+  27  cmd : DO $$7 cmd WHILE '(' $$8 exp ')' ';'
 
-  26  $$9 :
+  28  $$9 :
 
-  27  $$10 :
+  29  $$10 :
 
-  28  $$11 :
+  30  $$11 :
 
-  29  cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd
+  31  $$12 :
 
-  30  $$12 :
+  32  cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd
 
-  31  cmd : IF '(' exp $$12 ')' cmd restoIf
+  33  $$13 :
 
-  32  $$13 :
+  34  cmd : IF '(' exp $$13 ')' cmd restoIf
 
-  33  restoIf : ELSE $$13 cmd
-  34          |
+  35  $$14 :
 
-  35  FORINICIO : exp
-  36            |
+  36  restoIf : ELSE $$14 cmd
+  37          |
 
-  37  FORCONDICAO : exp
-  38              |
+  38  FORINICIO : exp
+  39            |
 
-  39  FORINCREMENTO : exp
-  40                |
+  40  FORCONDICAO : exp
+  41              |
 
-  41  exp : NUM
-  42      | TRUE
-  43      | FALSE
-  44      | ID
-  45      | '(' exp ')'
-  46      | '!' exp
-  47      | exp '+' exp
-  48      | exp '-' exp
-  49      | exp '*' exp
-  50      | exp '/' exp
-  51      | exp '%' exp
-  52      | exp '>' exp
-  53      | exp '<' exp
-  54      | exp EQ exp
-  55      | exp LEQ exp
-  56      | exp GEQ exp
-  57      | exp NEQ exp
-  58      | exp OR exp
-  59      | exp AND exp
-  60      | PLUSPLUS ID
-  61      | ID PLUSPLUS
-  62      | MINUSMINUS ID
-  63      | ID MINUSMINUS
-  64      | ID '=' exp
-  65      | ID PLUSEQUAL exp
+  42  FORINCREMENTO : exp
+  43                |
 
-  66  $$14 :
+  44  exp : NUM
+  45      | TRUE
+  46      | FALSE
+  47      | ID
+  48      | '(' exp ')'
+  49      | '!' exp
+  50      | exp '+' exp
+  51      | exp '-' exp
+  52      | exp '*' exp
+  53      | exp '/' exp
+  54      | exp '%' exp
+  55      | exp '>' exp
+  56      | exp '<' exp
+  57      | exp EQ exp
+  58      | exp LEQ exp
+  59      | exp GEQ exp
+  60      | exp NEQ exp
+  61      | exp OR exp
+  62      | exp AND exp
+  63      | PLUSPLUS ID
+  64      | ID PLUSPLUS
+  65      | MINUSMINUS ID
+  66      | ID MINUSMINUS
+  67      | ID '=' exp
+  68      | ID PLUSEQUAL exp
 
-  67  $$15 :
+  69  $$15 :
 
-  68  exp : exp $$14 '?' exp $$15 ':' exp
+  70  $$16 :
+
+  71  exp : exp $$15 '?' exp $$16 ':' exp
 
 state 0
 	$accept : . prog $end  (0)
@@ -267,56 +271,58 @@ state 19
 	FOR  shift 29
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
 	'}'  reduce 4
 
-	$$3  goto 35
-	cmd  goto 36
-	exp  goto 37
+	$$3  goto 37
+	cmd  goto 38
+	exp  goto 39
 
 
 state 20
-	exp : ID .  (44)
-	exp : ID . PLUSPLUS  (61)
-	exp : ID . MINUSMINUS  (63)
-	exp : ID . '=' exp  (64)
-	exp : ID . PLUSEQUAL exp  (65)
+	exp : ID .  (47)
+	exp : ID . PLUSPLUS  (64)
+	exp : ID . MINUSMINUS  (66)
+	exp : ID . '=' exp  (67)
+	exp : ID . PLUSEQUAL exp  (68)
 
-	PLUSPLUS  shift 38
-	MINUSMINUS  shift 39
-	PLUSEQUAL  shift 40
-	'='  shift 41
-	EQ  reduce 44
-	LEQ  reduce 44
-	GEQ  reduce 44
-	NEQ  reduce 44
-	AND  reduce 44
-	OR  reduce 44
-	'?'  reduce 44
-	':'  reduce 44
-	'>'  reduce 44
-	'<'  reduce 44
-	'+'  reduce 44
-	'-'  reduce 44
-	'*'  reduce 44
-	'/'  reduce 44
-	'%'  reduce 44
-	')'  reduce 44
-	';'  reduce 44
+	PLUSPLUS  shift 40
+	MINUSMINUS  shift 41
+	PLUSEQUAL  shift 42
+	'='  shift 43
+	EQ  reduce 47
+	LEQ  reduce 47
+	GEQ  reduce 47
+	NEQ  reduce 47
+	AND  reduce 47
+	OR  reduce 47
+	'?'  reduce 47
+	':'  reduce 47
+	'>'  reduce 47
+	'<'  reduce 47
+	'+'  reduce 47
+	'-'  reduce 47
+	'*'  reduce 47
+	'/'  reduce 47
+	'%'  reduce 47
+	')'  reduce 47
+	';'  reduce 47
 
 
 state 21
-	exp : NUM .  (41)
+	exp : NUM .  (44)
 
-	.  reduce 41
+	.  reduce 44
 
 
 state 22
 	cmd : READ . '(' ID ')' ';'  (19)
 
-	'('  shift 42
+	'('  shift 44
 	.  error
 
 
@@ -324,86 +330,84 @@ state 23
 	cmd : WRITE . '(' LIT ')' ';'  (16)
 	cmd : WRITE . '(' LIT $$4 ',' exp ')' ';'  (18)
 
-	'('  shift 43
+	'('  shift 45
 	.  error
 
 
 state 24
-	cmd : IF . '(' exp $$12 ')' cmd restoIf  (31)
+	cmd : IF . '(' exp $$13 ')' cmd restoIf  (34)
 
-	'('  shift 44
+	'('  shift 46
 	.  error
 
 
 state 25
-	cmd : WHILE . $$5 '(' exp ')' $$6 cmd  (22)
-	$$5 : .  (20)
+	cmd : WHILE . $$5 '(' exp ')' $$6 cmd  (24)
+	$$5 : .  (22)
 
-	.  reduce 20
+	.  reduce 22
 
-	$$5  goto 45
+	$$5  goto 47
 
 
 state 26
-	exp : TRUE .  (42)
+	exp : TRUE .  (45)
 
-	.  reduce 42
+	.  reduce 45
 
 
 state 27
-	exp : FALSE .  (43)
+	exp : FALSE .  (46)
 
-	.  reduce 43
+	.  reduce 46
 
 
 state 28
-	cmd : DO . $$7 cmd WHILE '(' exp ')' ';'  (24)
-	$$7 : .  (23)
+	cmd : DO . $$7 cmd WHILE '(' $$8 exp ')' ';'  (27)
+	$$7 : .  (25)
 
-	.  reduce 23
+	.  reduce 25
 
-	$$7  goto 46
+	$$7  goto 48
 
 
 state 29
-	cmd : FOR . '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
+	cmd : FOR . '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
 
-	'('  shift 47
+	'('  shift 49
 	.  error
 
 
 state 30
-	exp : PLUSPLUS . ID  (60)
+	exp : PLUSPLUS . ID  (63)
 
-	ID  shift 48
+	ID  shift 50
 	.  error
 
 
 state 31
-	exp : MINUSMINUS . ID  (62)
+	exp : MINUSMINUS . ID  (65)
 
-	ID  shift 49
+	ID  shift 51
 	.  error
 
 
 state 32
-	exp : '!' . exp  (46)
+	cmd : BREAK . ';'  (20)
 
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	';'  shift 52
 	.  error
-
-	exp  goto 50
 
 
 state 33
-	exp : '(' . exp ')'  (45)
+	cmd : CONTINUE . ';'  (21)
+
+	';'  shift 53
+	.  error
+
+
+state 34
+	exp : '!' . exp  (49)
 
 	ID  shift 20
 	NUM  shift 21
@@ -411,133 +415,102 @@ state 33
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
-	exp  goto 51
+	exp  goto 54
 
 
-state 34
+state 35
+	exp : '(' . exp ')'  (48)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 55
+
+
+state 36
 	cmd : '{' . lcmd '}'  (15)
 	lcmd : .  (13)
 
 	.  reduce 13
 
-	lcmd  goto 52
+	lcmd  goto 56
 
 
-state 35
+state 37
 	mainF : VOID MAIN '(' ')' $$2 '{' lcmd $$3 . '}'  (5)
 
-	'}'  shift 53
+	'}'  shift 57
 	.  error
 
 
-state 36
+state 38
 	lcmd : lcmd cmd .  (12)
 
 	.  reduce 12
 
 
-state 37
-	cmd : exp . ';'  (14)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	';'  shift 67
-	'?'  reduce 66
-
-	$$14  goto 68
-
-
-state 38
-	exp : ID PLUSPLUS .  (61)
-
-	.  reduce 61
-
-
 state 39
-	exp : ID MINUSMINUS .  (63)
+	cmd : exp . ';'  (14)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	.  reduce 63
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	';'  shift 71
+	'?'  reduce 69
+
+	$$15  goto 72
 
 
 state 40
-	exp : ID PLUSEQUAL . exp  (65)
+	exp : ID PLUSPLUS .  (64)
 
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 69
+	.  reduce 64
 
 
 state 41
-	exp : ID '=' . exp  (64)
+	exp : ID MINUSMINUS .  (66)
 
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 70
+	.  reduce 66
 
 
 state 42
-	cmd : READ '(' . ID ')' ';'  (19)
-
-	ID  shift 71
-	.  error
-
-
-state 43
-	cmd : WRITE '(' . LIT ')' ';'  (16)
-	cmd : WRITE '(' . LIT $$4 ',' exp ')' ';'  (18)
-
-	LIT  shift 72
-	.  error
-
-
-state 44
-	cmd : IF '(' . exp $$12 ')' cmd restoIf  (31)
+	exp : ID PLUSEQUAL . exp  (68)
 
 	ID  shift 20
 	NUM  shift 21
@@ -545,22 +518,69 @@ state 44
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 73
 
 
-state 45
-	cmd : WHILE $$5 . '(' exp ')' $$6 cmd  (22)
+state 43
+	exp : ID '=' . exp  (67)
 
-	'('  shift 74
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 74
+
+
+state 44
+	cmd : READ '(' . ID ')' ';'  (19)
+
+	ID  shift 75
+	.  error
+
+
+state 45
+	cmd : WRITE '(' . LIT ')' ';'  (16)
+	cmd : WRITE '(' . LIT $$4 ',' exp ')' ';'  (18)
+
+	LIT  shift 76
 	.  error
 
 
 state 46
-	cmd : DO $$7 . cmd WHILE '(' exp ')' ';'  (24)
+	cmd : IF '(' . exp $$13 ')' cmd restoIf  (34)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 77
+
+
+state 47
+	cmd : WHILE $$5 . '(' exp ')' $$6 cmd  (24)
+
+	'('  shift 78
+	.  error
+
+
+state 48
+	cmd : DO $$7 . cmd WHILE '(' $$8 exp ')' ';'  (27)
 
 	ID  shift 20
 	NUM  shift 21
@@ -574,98 +594,112 @@ state 46
 	FOR  shift 29
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
 	.  error
 
-	cmd  goto 75
-	exp  goto 37
-
-
-state 47
-	cmd : FOR '(' . $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
-	$$8 : .  (25)
-
-	.  reduce 25
-
-	$$8  goto 76
-
-
-state 48
-	exp : PLUSPLUS ID .  (60)
-
-	.  reduce 60
+	cmd  goto 79
+	exp  goto 39
 
 
 state 49
-	exp : MINUSMINUS ID .  (62)
+	cmd : FOR '(' . $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
+	$$9 : .  (28)
 
-	.  reduce 62
+	.  reduce 28
+
+	$$9  goto 80
 
 
-50: reduce/reduce conflict (reduce 46, reduce 66) on '?'
 state 50
-	exp : '!' exp .  (46)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : PLUSPLUS ID .  (63)
 
-	.  reduce 46
-
-	$$14  goto 68
+	.  reduce 63
 
 
 state 51
-	exp : '(' exp . ')'  (45)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : MINUSMINUS ID .  (65)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	')'  shift 77
-	'?'  reduce 66
-
-	$$14  goto 68
+	.  reduce 65
 
 
 state 52
+	cmd : BREAK ';' .  (20)
+
+	.  reduce 20
+
+
+state 53
+	cmd : CONTINUE ';' .  (21)
+
+	.  reduce 21
+
+
+54: reduce/reduce conflict (reduce 49, reduce 69) on '?'
+state 54
+	exp : '!' exp .  (49)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	.  reduce 49
+
+	$$15  goto 72
+
+
+state 55
+	exp : '(' exp . ')'  (48)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	')'  shift 81
+	'?'  reduce 69
+
+	$$15  goto 72
+
+
+state 56
 	lcmd : lcmd . cmd  (12)
 	cmd : '{' lcmd . '}'  (15)
 
@@ -681,88 +715,26 @@ state 52
 	FOR  shift 29
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
-	'}'  shift 78
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
+	'}'  shift 82
 	.  error
 
-	cmd  goto 36
-	exp  goto 37
+	cmd  goto 38
+	exp  goto 39
 
 
-state 53
+state 57
 	mainF : VOID MAIN '(' ')' $$2 '{' lcmd $$3 '}' .  (5)
 
 	.  reduce 5
 
 
-state 54
-	exp : exp EQ . exp  (54)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 79
-
-
-state 55
-	exp : exp LEQ . exp  (55)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 80
-
-
-state 56
-	exp : exp GEQ . exp  (56)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 81
-
-
-state 57
-	exp : exp NEQ . exp  (57)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 82
-
-
 state 58
-	exp : exp AND . exp  (59)
+	exp : exp EQ . exp  (57)
 
 	ID  shift 20
 	NUM  shift 21
@@ -770,15 +742,15 @@ state 58
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 83
 
 
 state 59
-	exp : exp OR . exp  (58)
+	exp : exp LEQ . exp  (58)
 
 	ID  shift 20
 	NUM  shift 21
@@ -786,15 +758,15 @@ state 59
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 84
 
 
 state 60
-	exp : exp '>' . exp  (52)
+	exp : exp GEQ . exp  (59)
 
 	ID  shift 20
 	NUM  shift 21
@@ -802,15 +774,15 @@ state 60
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 85
 
 
 state 61
-	exp : exp '<' . exp  (53)
+	exp : exp NEQ . exp  (60)
 
 	ID  shift 20
 	NUM  shift 21
@@ -818,15 +790,15 @@ state 61
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 86
 
 
 state 62
-	exp : exp '+' . exp  (47)
+	exp : exp AND . exp  (62)
 
 	ID  shift 20
 	NUM  shift 21
@@ -834,15 +806,15 @@ state 62
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 87
 
 
 state 63
-	exp : exp '-' . exp  (48)
+	exp : exp OR . exp  (61)
 
 	ID  shift 20
 	NUM  shift 21
@@ -850,15 +822,15 @@ state 63
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 88
 
 
 state 64
-	exp : exp '*' . exp  (49)
+	exp : exp '>' . exp  (55)
 
 	ID  shift 20
 	NUM  shift 21
@@ -866,15 +838,15 @@ state 64
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 89
 
 
 state 65
-	exp : exp '/' . exp  (50)
+	exp : exp '<' . exp  (56)
 
 	ID  shift 20
 	NUM  shift 21
@@ -882,15 +854,15 @@ state 65
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 90
 
 
 state 66
-	exp : exp '%' . exp  (51)
+	exp : exp '+' . exp  (50)
 
 	ID  shift 20
 	NUM  shift 21
@@ -898,202 +870,242 @@ state 66
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
 	exp  goto 91
 
 
 state 67
+	exp : exp '-' . exp  (51)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 92
+
+
+state 68
+	exp : exp '*' . exp  (52)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 93
+
+
+state 69
+	exp : exp '/' . exp  (53)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 94
+
+
+state 70
+	exp : exp '%' . exp  (54)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 95
+
+
+state 71
 	cmd : exp ';' .  (14)
 
 	.  reduce 14
 
 
-state 68
-	exp : exp $$14 . '?' exp $$15 ':' exp  (68)
-
-	'?'  shift 92
-	.  error
-
-
-69: shift/reduce conflict (shift 54, reduce 65) on EQ
-69: shift/reduce conflict (shift 55, reduce 65) on LEQ
-69: shift/reduce conflict (shift 56, reduce 65) on GEQ
-69: shift/reduce conflict (shift 57, reduce 65) on NEQ
-69: shift/reduce conflict (shift 58, reduce 65) on AND
-69: shift/reduce conflict (shift 59, reduce 65) on OR
-69: reduce/reduce conflict (reduce 65, reduce 66) on '?'
-69: shift/reduce conflict (shift 60, reduce 65) on '>'
-69: shift/reduce conflict (shift 61, reduce 65) on '<'
-69: shift/reduce conflict (shift 62, reduce 65) on '+'
-69: shift/reduce conflict (shift 63, reduce 65) on '-'
-69: shift/reduce conflict (shift 64, reduce 65) on '*'
-69: shift/reduce conflict (shift 65, reduce 65) on '/'
-69: shift/reduce conflict (shift 66, reduce 65) on '%'
-state 69
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : ID PLUSEQUAL exp .  (65)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 65
-	':'  reduce 65
-	')'  reduce 65
-	';'  reduce 65
-
-	$$14  goto 68
-
-
-70: reduce/reduce conflict (reduce 64, reduce 66) on '?'
-state 70
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : ID '=' exp .  (64)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 64
-	':'  reduce 64
-	')'  reduce 64
-	';'  reduce 64
-
-	$$14  goto 68
-
-
-state 71
-	cmd : READ '(' ID . ')' ';'  (19)
-
-	')'  shift 93
-	.  error
-
-
 state 72
-	cmd : WRITE '(' LIT . ')' ';'  (16)
-	cmd : WRITE '(' LIT . $$4 ',' exp ')' ';'  (18)
-	$$4 : .  (17)
+	exp : exp $$15 . '?' exp $$16 ':' exp  (71)
 
-	')'  shift 94
-	','  reduce 17
-
-	$$4  goto 95
-
-
-state 73
-	cmd : IF '(' exp . $$12 ')' cmd restoIf  (31)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$12 : .  (30)
-	$$14 : .  (66)
-
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 66
-	')'  reduce 30
-
-	$$12  goto 96
-	$$14  goto 68
-
-
-state 74
-	cmd : WHILE $$5 '(' . exp ')' $$6 cmd  (22)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'?'  shift 96
 	.  error
 
-	exp  goto 97
+
+73: shift/reduce conflict (shift 58, reduce 68) on EQ
+73: shift/reduce conflict (shift 59, reduce 68) on LEQ
+73: shift/reduce conflict (shift 60, reduce 68) on GEQ
+73: shift/reduce conflict (shift 61, reduce 68) on NEQ
+73: shift/reduce conflict (shift 62, reduce 68) on AND
+73: shift/reduce conflict (shift 63, reduce 68) on OR
+73: reduce/reduce conflict (reduce 68, reduce 69) on '?'
+73: shift/reduce conflict (shift 64, reduce 68) on '>'
+73: shift/reduce conflict (shift 65, reduce 68) on '<'
+73: shift/reduce conflict (shift 66, reduce 68) on '+'
+73: shift/reduce conflict (shift 67, reduce 68) on '-'
+73: shift/reduce conflict (shift 68, reduce 68) on '*'
+73: shift/reduce conflict (shift 69, reduce 68) on '/'
+73: shift/reduce conflict (shift 70, reduce 68) on '%'
+state 73
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : ID PLUSEQUAL exp .  (68)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 68
+	':'  reduce 68
+	')'  reduce 68
+	';'  reduce 68
+
+	$$15  goto 72
+
+
+74: reduce/reduce conflict (reduce 67, reduce 69) on '?'
+state 74
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : ID '=' exp .  (67)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 67
+	':'  reduce 67
+	')'  reduce 67
+	';'  reduce 67
+
+	$$15  goto 72
 
 
 state 75
-	cmd : DO $$7 cmd . WHILE '(' exp ')' ';'  (24)
+	cmd : READ '(' ID . ')' ';'  (19)
 
-	WHILE  shift 98
+	')'  shift 97
 	.  error
 
 
 state 76
-	cmd : FOR '(' $$8 . FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
-	FORINICIO : .  (36)
+	cmd : WRITE '(' LIT . ')' ';'  (16)
+	cmd : WRITE '(' LIT . $$4 ',' exp ')' ';'  (18)
+	$$4 : .  (17)
+
+	')'  shift 98
+	','  reduce 17
+
+	$$4  goto 99
+
+
+state 77
+	cmd : IF '(' exp . $$13 ')' cmd restoIf  (34)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$13 : .  (33)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 69
+	')'  reduce 33
+
+	$$13  goto 100
+	$$15  goto 72
+
+
+state 78
+	cmd : WHILE $$5 '(' . exp ')' $$6 cmd  (24)
 
 	ID  shift 20
 	NUM  shift 21
@@ -1101,170 +1113,74 @@ state 76
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	';'  reduce 36
+	'!'  shift 34
+	'('  shift 35
+	.  error
 
-	exp  goto 99
-	FORINICIO  goto 100
-
-
-state 77
-	exp : '(' exp ')' .  (45)
-
-	.  reduce 45
+	exp  goto 101
 
 
-state 78
+state 79
+	cmd : DO $$7 cmd . WHILE '(' $$8 exp ')' ';'  (27)
+
+	WHILE  shift 102
+	.  error
+
+
+state 80
+	cmd : FOR '(' $$9 . FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
+	FORINICIO : .  (39)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	';'  reduce 39
+
+	exp  goto 103
+	FORINICIO  goto 104
+
+
+state 81
+	exp : '(' exp ')' .  (48)
+
+	.  reduce 48
+
+
+state 82
 	cmd : '{' lcmd '}' .  (15)
 
 	.  reduce 15
 
 
-79: reduce/reduce conflict (reduce 54, reduce 66) on '?'
-state 79
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp EQ exp .  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+83: reduce/reduce conflict (reduce 57, reduce 69) on '?'
+state 83
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp EQ exp .  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 54
-	LEQ  reduce 54
-	GEQ  reduce 54
-	NEQ  reduce 54
-	AND  reduce 54
-	OR  reduce 54
-	'?'  reduce 54
-	':'  reduce 54
-	'>'  reduce 54
-	'<'  reduce 54
-	')'  reduce 54
-	';'  reduce 54
-
-	$$14  goto 68
-
-
-80: reduce/reduce conflict (reduce 55, reduce 66) on '?'
-state 80
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp LEQ exp .  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 55
-	LEQ  reduce 55
-	GEQ  reduce 55
-	NEQ  reduce 55
-	AND  reduce 55
-	OR  reduce 55
-	'?'  reduce 55
-	':'  reduce 55
-	'>'  reduce 55
-	'<'  reduce 55
-	')'  reduce 55
-	';'  reduce 55
-
-	$$14  goto 68
-
-
-81: reduce/reduce conflict (reduce 56, reduce 66) on '?'
-state 81
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp GEQ exp .  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 56
-	LEQ  reduce 56
-	GEQ  reduce 56
-	NEQ  reduce 56
-	AND  reduce 56
-	OR  reduce 56
-	'?'  reduce 56
-	':'  reduce 56
-	'>'  reduce 56
-	'<'  reduce 56
-	')'  reduce 56
-	';'  reduce 56
-
-	$$14  goto 68
-
-
-82: reduce/reduce conflict (reduce 57, reduce 66) on '?'
-state 82
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp NEQ exp .  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
 	EQ  reduce 57
 	LEQ  reduce 57
 	GEQ  reduce 57
@@ -1278,323 +1194,443 @@ state 82
 	')'  reduce 57
 	';'  reduce 57
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-83: reduce/reduce conflict (reduce 59, reduce 66) on '?'
-state 83
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp AND exp .  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+84: reduce/reduce conflict (reduce 58, reduce 69) on '?'
+state 84
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp LEQ exp .  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 58
+	LEQ  reduce 58
+	GEQ  reduce 58
+	NEQ  reduce 58
+	AND  reduce 58
+	OR  reduce 58
+	'?'  reduce 58
+	':'  reduce 58
+	'>'  reduce 58
+	'<'  reduce 58
+	')'  reduce 58
+	';'  reduce 58
+
+	$$15  goto 72
+
+
+85: reduce/reduce conflict (reduce 59, reduce 69) on '?'
+state 85
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp GEQ exp .  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 59
+	LEQ  reduce 59
+	GEQ  reduce 59
+	NEQ  reduce 59
 	AND  reduce 59
 	OR  reduce 59
 	'?'  reduce 59
 	':'  reduce 59
+	'>'  reduce 59
+	'<'  reduce 59
 	')'  reduce 59
 	';'  reduce 59
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-84: reduce/reduce conflict (reduce 58, reduce 66) on '?'
-state 84
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp OR exp .  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	OR  reduce 58
-	'?'  reduce 58
-	':'  reduce 58
-	')'  reduce 58
-	';'  reduce 58
-
-	$$14  goto 68
-
-
-85: reduce/reduce conflict (reduce 52, reduce 66) on '?'
-state 85
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp '>' exp .  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 52
-	LEQ  reduce 52
-	GEQ  reduce 52
-	NEQ  reduce 52
-	AND  reduce 52
-	OR  reduce 52
-	'?'  reduce 52
-	':'  reduce 52
-	'>'  reduce 52
-	'<'  reduce 52
-	')'  reduce 52
-	';'  reduce 52
-
-	$$14  goto 68
-
-
-86: reduce/reduce conflict (reduce 53, reduce 66) on '?'
+86: reduce/reduce conflict (reduce 60, reduce 69) on '?'
 state 86
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp '<' exp .  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp NEQ exp .  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 53
-	LEQ  reduce 53
-	GEQ  reduce 53
-	NEQ  reduce 53
-	AND  reduce 53
-	OR  reduce 53
-	'?'  reduce 53
-	':'  reduce 53
-	'>'  reduce 53
-	'<'  reduce 53
-	')'  reduce 53
-	';'  reduce 53
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 60
+	LEQ  reduce 60
+	GEQ  reduce 60
+	NEQ  reduce 60
+	AND  reduce 60
+	OR  reduce 60
+	'?'  reduce 60
+	':'  reduce 60
+	'>'  reduce 60
+	'<'  reduce 60
+	')'  reduce 60
+	';'  reduce 60
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-87: reduce/reduce conflict (reduce 47, reduce 66) on '?'
+87: reduce/reduce conflict (reduce 62, reduce 69) on '?'
 state 87
-	exp : exp . '+' exp  (47)
-	exp : exp '+' exp .  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp AND exp .  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 47
-	LEQ  reduce 47
-	GEQ  reduce 47
-	NEQ  reduce 47
-	AND  reduce 47
-	OR  reduce 47
-	'?'  reduce 47
-	':'  reduce 47
-	'>'  reduce 47
-	'<'  reduce 47
-	'+'  reduce 47
-	'-'  reduce 47
-	')'  reduce 47
-	';'  reduce 47
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	AND  reduce 62
+	OR  reduce 62
+	'?'  reduce 62
+	':'  reduce 62
+	')'  reduce 62
+	';'  reduce 62
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-88: reduce/reduce conflict (reduce 48, reduce 66) on '?'
+88: reduce/reduce conflict (reduce 61, reduce 69) on '?'
 state 88
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp '-' exp .  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp OR exp .  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	EQ  reduce 48
-	LEQ  reduce 48
-	GEQ  reduce 48
-	NEQ  reduce 48
-	AND  reduce 48
-	OR  reduce 48
-	'?'  reduce 48
-	':'  reduce 48
-	'>'  reduce 48
-	'<'  reduce 48
-	'+'  reduce 48
-	'-'  reduce 48
-	')'  reduce 48
-	';'  reduce 48
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	OR  reduce 61
+	'?'  reduce 61
+	':'  reduce 61
+	')'  reduce 61
+	';'  reduce 61
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-89: reduce/reduce conflict (reduce 49, reduce 66) on '?'
+89: reduce/reduce conflict (reduce 55, reduce 69) on '?'
 state 89
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp '*' exp .  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp '>' exp .  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	.  reduce 49
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 55
+	LEQ  reduce 55
+	GEQ  reduce 55
+	NEQ  reduce 55
+	AND  reduce 55
+	OR  reduce 55
+	'?'  reduce 55
+	':'  reduce 55
+	'>'  reduce 55
+	'<'  reduce 55
+	')'  reduce 55
+	';'  reduce 55
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-90: reduce/reduce conflict (reduce 50, reduce 66) on '?'
+90: reduce/reduce conflict (reduce 56, reduce 69) on '?'
 state 90
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp '/' exp .  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp '<' exp .  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	.  reduce 50
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 56
+	LEQ  reduce 56
+	GEQ  reduce 56
+	NEQ  reduce 56
+	AND  reduce 56
+	OR  reduce 56
+	'?'  reduce 56
+	':'  reduce 56
+	'>'  reduce 56
+	'<'  reduce 56
+	')'  reduce 56
+	';'  reduce 56
 
-	$$14  goto 68
+	$$15  goto 72
 
 
-91: reduce/reduce conflict (reduce 51, reduce 66) on '?'
+91: reduce/reduce conflict (reduce 50, reduce 69) on '?'
 state 91
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp '%' exp .  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp . '+' exp  (50)
+	exp : exp '+' exp .  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	.  reduce 51
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 50
+	LEQ  reduce 50
+	GEQ  reduce 50
+	NEQ  reduce 50
+	AND  reduce 50
+	OR  reduce 50
+	'?'  reduce 50
+	':'  reduce 50
+	'>'  reduce 50
+	'<'  reduce 50
+	'+'  reduce 50
+	'-'  reduce 50
+	')'  reduce 50
+	';'  reduce 50
 
-	$$14  goto 68
+	$$15  goto 72
 
 
+92: reduce/reduce conflict (reduce 51, reduce 69) on '?'
 state 92
-	exp : exp $$14 '?' . exp $$15 ':' exp  (68)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp '-' exp .  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	EQ  reduce 51
+	LEQ  reduce 51
+	GEQ  reduce 51
+	NEQ  reduce 51
+	AND  reduce 51
+	OR  reduce 51
+	'?'  reduce 51
+	':'  reduce 51
+	'>'  reduce 51
+	'<'  reduce 51
+	'+'  reduce 51
+	'-'  reduce 51
+	')'  reduce 51
+	';'  reduce 51
+
+	$$15  goto 72
+
+
+93: reduce/reduce conflict (reduce 52, reduce 69) on '?'
+state 93
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp '*' exp .  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	.  reduce 52
+
+	$$15  goto 72
+
+
+94: reduce/reduce conflict (reduce 53, reduce 69) on '?'
+state 94
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp '/' exp .  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	.  reduce 53
+
+	$$15  goto 72
+
+
+95: reduce/reduce conflict (reduce 54, reduce 69) on '?'
+state 95
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp '%' exp .  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	.  reduce 54
+
+	$$15  goto 72
+
+
+state 96
+	exp : exp $$15 '?' . exp $$16 ':' exp  (71)
 
 	ID  shift 20
 	NUM  shift 21
@@ -1602,181 +1638,181 @@ state 92
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
-	exp  goto 101
-
-
-state 93
-	cmd : READ '(' ID ')' . ';'  (19)
-
-	';'  shift 102
-	.  error
-
-
-state 94
-	cmd : WRITE '(' LIT ')' . ';'  (16)
-
-	';'  shift 103
-	.  error
-
-
-state 95
-	cmd : WRITE '(' LIT $$4 . ',' exp ')' ';'  (18)
-
-	','  shift 104
-	.  error
-
-
-state 96
-	cmd : IF '(' exp $$12 . ')' cmd restoIf  (31)
-
-	')'  shift 105
-	.  error
+	exp  goto 105
 
 
 state 97
-	cmd : WHILE $$5 '(' exp . ')' $$6 cmd  (22)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	cmd : READ '(' ID ')' . ';'  (19)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	')'  shift 106
-	'?'  reduce 66
-
-	$$14  goto 68
+	';'  shift 106
+	.  error
 
 
 state 98
-	cmd : DO $$7 cmd WHILE . '(' exp ')' ';'  (24)
+	cmd : WRITE '(' LIT ')' . ';'  (16)
 
-	'('  shift 107
+	';'  shift 107
 	.  error
 
 
 state 99
-	FORINICIO : exp .  (35)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	cmd : WRITE '(' LIT $$4 . ',' exp ')' ';'  (18)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 66
-	';'  reduce 35
-
-	$$14  goto 68
+	','  shift 108
+	.  error
 
 
 state 100
-	cmd : FOR '(' $$8 FORINICIO . ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
+	cmd : IF '(' exp $$13 . ')' cmd restoIf  (34)
 
-	';'  shift 108
+	')'  shift 109
 	.  error
 
 
 state 101
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	exp : exp $$14 '?' exp . $$15 ':' exp  (68)
-	$$14 : .  (66)
-	$$15 : .  (67)
+	cmd : WHILE $$5 '(' exp . ')' $$6 cmd  (24)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 66
-	':'  reduce 67
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	')'  shift 110
+	'?'  reduce 69
 
-	$$14  goto 68
-	$$15  goto 109
+	$$15  goto 72
 
 
 state 102
+	cmd : DO $$7 cmd WHILE . '(' $$8 exp ')' ';'  (27)
+
+	'('  shift 111
+	.  error
+
+
+state 103
+	FORINICIO : exp .  (38)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 69
+	';'  reduce 38
+
+	$$15  goto 72
+
+
+state 104
+	cmd : FOR '(' $$9 FORINICIO . ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
+
+	';'  shift 112
+	.  error
+
+
+state 105
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	exp : exp $$15 '?' exp . $$16 ':' exp  (71)
+	$$15 : .  (69)
+	$$16 : .  (70)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 69
+	':'  reduce 70
+
+	$$15  goto 72
+	$$16  goto 113
+
+
+state 106
 	cmd : READ '(' ID ')' ';' .  (19)
 
 	.  reduce 19
 
 
-state 103
+state 107
 	cmd : WRITE '(' LIT ')' ';' .  (16)
 
 	.  reduce 16
 
 
-state 104
+state 108
 	cmd : WRITE '(' LIT $$4 ',' . exp ')' ';'  (18)
 
 	ID  shift 20
@@ -1785,143 +1821,15 @@ state 104
 	FALSE  shift 27
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
+	'!'  shift 34
+	'('  shift 35
 	.  error
 
-	exp  goto 110
-
-
-state 105
-	cmd : IF '(' exp $$12 ')' . cmd restoIf  (31)
-
-	ID  shift 20
-	NUM  shift 21
-	READ  shift 22
-	WRITE  shift 23
-	IF  shift 24
-	WHILE  shift 25
-	TRUE  shift 26
-	FALSE  shift 27
-	DO  shift 28
-	FOR  shift 29
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
-	.  error
-
-	cmd  goto 111
-	exp  goto 37
-
-
-state 106
-	cmd : WHILE $$5 '(' exp ')' . $$6 cmd  (22)
-	$$6 : .  (21)
-
-	.  reduce 21
-
-	$$6  goto 112
-
-
-state 107
-	cmd : DO $$7 cmd WHILE '(' . exp ')' ';'  (24)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
-
-	exp  goto 113
-
-
-state 108
-	cmd : FOR '(' $$8 FORINICIO ';' . $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
-	$$9 : .  (26)
-
-	.  reduce 26
-
-	$$9  goto 114
+	exp  goto 114
 
 
 state 109
-	exp : exp $$14 '?' exp $$15 . ':' exp  (68)
-
-	':'  shift 115
-	.  error
-
-
-state 110
-	cmd : WRITE '(' LIT $$4 ',' exp . ')' ';'  (18)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
-
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	')'  shift 116
-	'?'  reduce 66
-
-	$$14  goto 68
-
-
-111: shift/reduce conflict (shift 117, reduce 34) on ELSE
-state 111
-	cmd : IF '(' exp $$12 ')' cmd . restoIf  (31)
-	restoIf : .  (34)
-
-	ELSE  shift 117
-	ID  reduce 34
-	NUM  reduce 34
-	READ  reduce 34
-	WRITE  reduce 34
-	IF  reduce 34
-	WHILE  reduce 34
-	TRUE  reduce 34
-	FALSE  reduce 34
-	DO  reduce 34
-	FOR  reduce 34
-	PLUSPLUS  reduce 34
-	MINUSMINUS  reduce 34
-	'!'  reduce 34
-	'('  reduce 34
-	'{'  reduce 34
-	'}'  reduce 34
-
-	restoIf  goto 118
-
-
-state 112
-	cmd : WHILE $$5 '(' exp ')' $$6 . cmd  (22)
+	cmd : IF '(' exp $$13 ')' . cmd restoIf  (34)
 
 	ID  shift 20
 	NUM  shift 21
@@ -1935,213 +1843,349 @@ state 112
 	FOR  shift 29
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
 	.  error
 
-	cmd  goto 119
-	exp  goto 37
+	cmd  goto 115
+	exp  goto 39
+
+
+state 110
+	cmd : WHILE $$5 '(' exp ')' . $$6 cmd  (24)
+	$$6 : .  (23)
+
+	.  reduce 23
+
+	$$6  goto 116
+
+
+state 111
+	cmd : DO $$7 cmd WHILE '(' . $$8 exp ')' ';'  (27)
+	$$8 : .  (26)
+
+	.  reduce 26
+
+	$$8  goto 117
+
+
+state 112
+	cmd : FOR '(' $$9 FORINICIO ';' . $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
+	$$10 : .  (29)
+
+	.  reduce 29
+
+	$$10  goto 118
 
 
 state 113
-	cmd : DO $$7 cmd WHILE '(' exp . ')' ';'  (24)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	exp : exp $$15 '?' exp $$16 . ':' exp  (71)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	')'  shift 120
-	'?'  reduce 66
-
-	$$14  goto 68
+	':'  shift 119
+	.  error
 
 
 state 114
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 . FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
-	FORCONDICAO : .  (38)
+	cmd : WRITE '(' LIT $$4 ',' exp . ')' ';'  (18)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
 
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	';'  reduce 38
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	')'  shift 120
+	'?'  reduce 69
 
-	exp  goto 121
-	FORCONDICAO  goto 122
+	$$15  goto 72
 
 
+115: shift/reduce conflict (shift 121, reduce 37) on ELSE
 state 115
-	exp : exp $$14 '?' exp $$15 ':' . exp  (68)
+	cmd : IF '(' exp $$13 ')' cmd . restoIf  (34)
+	restoIf : .  (37)
 
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	.  error
+	ELSE  shift 121
+	ID  reduce 37
+	NUM  reduce 37
+	READ  reduce 37
+	WRITE  reduce 37
+	IF  reduce 37
+	WHILE  reduce 37
+	TRUE  reduce 37
+	FALSE  reduce 37
+	DO  reduce 37
+	FOR  reduce 37
+	PLUSPLUS  reduce 37
+	MINUSMINUS  reduce 37
+	BREAK  reduce 37
+	CONTINUE  reduce 37
+	'!'  reduce 37
+	'('  reduce 37
+	'{'  reduce 37
+	'}'  reduce 37
 
-	exp  goto 123
+	restoIf  goto 122
 
 
 state 116
-	cmd : WRITE '(' LIT $$4 ',' exp ')' . ';'  (18)
+	cmd : WHILE $$5 '(' exp ')' $$6 . cmd  (24)
 
-	';'  shift 124
+	ID  shift 20
+	NUM  shift 21
+	READ  shift 22
+	WRITE  shift 23
+	IF  shift 24
+	WHILE  shift 25
+	TRUE  shift 26
+	FALSE  shift 27
+	DO  shift 28
+	FOR  shift 29
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
 	.  error
+
+	cmd  goto 123
+	exp  goto 39
 
 
 state 117
-	restoIf : ELSE . $$13 cmd  (33)
-	$$13 : .  (32)
+	cmd : DO $$7 cmd WHILE '(' $$8 . exp ')' ';'  (27)
 
-	.  reduce 32
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
 
-	$$13  goto 125
+	exp  goto 124
 
 
 state 118
-	cmd : IF '(' exp $$12 ')' cmd restoIf .  (31)
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 . FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
+	FORCONDICAO : .  (41)
 
-	.  reduce 31
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	';'  reduce 41
+
+	exp  goto 125
+	FORCONDICAO  goto 126
 
 
 state 119
-	cmd : WHILE $$5 '(' exp ')' $$6 cmd .  (22)
+	exp : exp $$15 '?' exp $$16 ':' . exp  (71)
 
-	.  reduce 22
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	.  error
+
+	exp  goto 127
 
 
 state 120
-	cmd : DO $$7 cmd WHILE '(' exp ')' . ';'  (24)
+	cmd : WRITE '(' LIT $$4 ',' exp ')' . ';'  (18)
 
-	';'  shift 126
+	';'  shift 128
 	.  error
 
 
 state 121
-	FORCONDICAO : exp .  (37)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	restoIf : ELSE . $$14 cmd  (36)
+	$$14 : .  (35)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 66
-	';'  reduce 37
+	.  reduce 35
 
-	$$14  goto 68
+	$$14  goto 129
 
 
 state 122
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO . ';' $$10 FORINCREMENTO $$11 ')' cmd  (29)
+	cmd : IF '(' exp $$13 ')' cmd restoIf .  (34)
 
-	';'  shift 127
-	.  error
+	.  reduce 34
 
 
-123: reduce/reduce conflict (reduce 66, reduce 68) on '?'
 state 123
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	exp : exp $$14 '?' exp $$15 ':' exp .  (68)
-	$$14 : .  (66)
+	cmd : WHILE $$5 '(' exp ')' $$6 cmd .  (24)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 66
-	':'  reduce 68
-	')'  reduce 68
-	';'  reduce 68
-
-	$$14  goto 68
+	.  reduce 24
 
 
 state 124
+	cmd : DO $$7 cmd WHILE '(' $$8 exp . ')' ';'  (27)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	')'  shift 130
+	'?'  reduce 69
+
+	$$15  goto 72
+
+
+state 125
+	FORCONDICAO : exp .  (40)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 69
+	';'  reduce 40
+
+	$$15  goto 72
+
+
+state 126
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO . ';' $$11 FORINCREMENTO $$12 ')' cmd  (32)
+
+	';'  shift 131
+	.  error
+
+
+127: reduce/reduce conflict (reduce 69, reduce 71) on '?'
+state 127
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	exp : exp $$15 '?' exp $$16 ':' exp .  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 69
+	':'  reduce 71
+	')'  reduce 71
+	';'  reduce 71
+
+	$$15  goto 72
+
+
+state 128
 	cmd : WRITE '(' LIT $$4 ',' exp ')' ';' .  (18)
 
 	.  reduce 18
 
 
-state 125
-	restoIf : ELSE $$13 . cmd  (33)
+state 129
+	restoIf : ELSE $$14 . cmd  (36)
 
 	ID  shift 20
 	NUM  shift 21
@@ -2155,109 +2199,118 @@ state 125
 	FOR  shift 29
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
 	.  error
 
-	cmd  goto 128
-	exp  goto 37
-
-
-state 126
-	cmd : DO $$7 cmd WHILE '(' exp ')' ';' .  (24)
-
-	.  reduce 24
-
-
-state 127
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' . $$10 FORINCREMENTO $$11 ')' cmd  (29)
-	$$10 : .  (27)
-
-	.  reduce 27
-
-	$$10  goto 129
-
-
-state 128
-	restoIf : ELSE $$13 cmd .  (33)
-
-	.  reduce 33
-
-
-state 129
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 . FORINCREMENTO $$11 ')' cmd  (29)
-	FORINCREMENTO : .  (40)
-
-	ID  shift 20
-	NUM  shift 21
-	TRUE  shift 26
-	FALSE  shift 27
-	PLUSPLUS  shift 30
-	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	')'  reduce 40
-
-	exp  goto 130
-	FORINCREMENTO  goto 131
+	cmd  goto 132
+	exp  goto 39
 
 
 state 130
-	FORINCREMENTO : exp .  (39)
-	exp : exp . '+' exp  (47)
-	exp : exp . '-' exp  (48)
-	exp : exp . '*' exp  (49)
-	exp : exp . '/' exp  (50)
-	exp : exp . '%' exp  (51)
-	exp : exp . '>' exp  (52)
-	exp : exp . '<' exp  (53)
-	exp : exp . EQ exp  (54)
-	exp : exp . LEQ exp  (55)
-	exp : exp . GEQ exp  (56)
-	exp : exp . NEQ exp  (57)
-	exp : exp . OR exp  (58)
-	exp : exp . AND exp  (59)
-	exp : exp . $$14 '?' exp $$15 ':' exp  (68)
-	$$14 : .  (66)
+	cmd : DO $$7 cmd WHILE '(' $$8 exp ')' . ';'  (27)
 
-	EQ  shift 54
-	LEQ  shift 55
-	GEQ  shift 56
-	NEQ  shift 57
-	AND  shift 58
-	OR  shift 59
-	'>'  shift 60
-	'<'  shift 61
-	'+'  shift 62
-	'-'  shift 63
-	'*'  shift 64
-	'/'  shift 65
-	'%'  shift 66
-	'?'  reduce 66
-	')'  reduce 39
-
-	$$14  goto 68
-
-
-state 131
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO . $$11 ')' cmd  (29)
-	$$11 : .  (28)
-
-	.  reduce 28
-
-	$$11  goto 132
-
-
-state 132
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 . ')' cmd  (29)
-
-	')'  shift 133
+	';'  shift 133
 	.  error
 
 
+state 131
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' . $$11 FORINCREMENTO $$12 ')' cmd  (32)
+	$$11 : .  (30)
+
+	.  reduce 30
+
+	$$11  goto 134
+
+
+state 132
+	restoIf : ELSE $$14 cmd .  (36)
+
+	.  reduce 36
+
+
 state 133
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' . cmd  (29)
+	cmd : DO $$7 cmd WHILE '(' $$8 exp ')' ';' .  (27)
+
+	.  reduce 27
+
+
+state 134
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 . FORINCREMENTO $$12 ')' cmd  (32)
+	FORINCREMENTO : .  (43)
+
+	ID  shift 20
+	NUM  shift 21
+	TRUE  shift 26
+	FALSE  shift 27
+	PLUSPLUS  shift 30
+	MINUSMINUS  shift 31
+	'!'  shift 34
+	'('  shift 35
+	')'  reduce 43
+
+	exp  goto 135
+	FORINCREMENTO  goto 136
+
+
+state 135
+	FORINCREMENTO : exp .  (42)
+	exp : exp . '+' exp  (50)
+	exp : exp . '-' exp  (51)
+	exp : exp . '*' exp  (52)
+	exp : exp . '/' exp  (53)
+	exp : exp . '%' exp  (54)
+	exp : exp . '>' exp  (55)
+	exp : exp . '<' exp  (56)
+	exp : exp . EQ exp  (57)
+	exp : exp . LEQ exp  (58)
+	exp : exp . GEQ exp  (59)
+	exp : exp . NEQ exp  (60)
+	exp : exp . OR exp  (61)
+	exp : exp . AND exp  (62)
+	exp : exp . $$15 '?' exp $$16 ':' exp  (71)
+	$$15 : .  (69)
+
+	EQ  shift 58
+	LEQ  shift 59
+	GEQ  shift 60
+	NEQ  shift 61
+	AND  shift 62
+	OR  shift 63
+	'>'  shift 64
+	'<'  shift 65
+	'+'  shift 66
+	'-'  shift 67
+	'*'  shift 68
+	'/'  shift 69
+	'%'  shift 70
+	'?'  reduce 69
+	')'  reduce 42
+
+	$$15  goto 72
+
+
+state 136
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO . $$12 ')' cmd  (32)
+	$$12 : .  (31)
+
+	.  reduce 31
+
+	$$12  goto 137
+
+
+state 137
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 . ')' cmd  (32)
+
+	')'  shift 138
+	.  error
+
+
+state 138
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' . cmd  (32)
 
 	ID  shift 20
 	NUM  shift 21
@@ -2271,28 +2324,26 @@ state 133
 	FOR  shift 29
 	PLUSPLUS  shift 30
 	MINUSMINUS  shift 31
-	'!'  shift 32
-	'('  shift 33
-	'{'  shift 34
+	BREAK  shift 32
+	CONTINUE  shift 33
+	'!'  shift 34
+	'('  shift 35
+	'{'  shift 36
 	.  error
 
-	cmd  goto 134
-	exp  goto 37
+	cmd  goto 139
+	exp  goto 39
 
 
-state 134
-	cmd : FOR '(' $$8 FORINICIO ';' $$9 FORCONDICAO ';' $$10 FORINCREMENTO $$11 ')' cmd .  (29)
+state 139
+	cmd : FOR '(' $$9 FORINICIO ';' $$10 FORCONDICAO ';' $$11 FORINCREMENTO $$12 ')' cmd .  (32)
 
-	.  reduce 29
+	.  reduce 32
 
 
-State 50 contains 1 reduce/reduce conflict.
-State 69 contains 13 shift/reduce conflicts, 1 reduce/reduce conflict.
-State 70 contains 1 reduce/reduce conflict.
-State 79 contains 1 reduce/reduce conflict.
-State 80 contains 1 reduce/reduce conflict.
-State 81 contains 1 reduce/reduce conflict.
-State 82 contains 1 reduce/reduce conflict.
+State 54 contains 1 reduce/reduce conflict.
+State 73 contains 13 shift/reduce conflicts, 1 reduce/reduce conflict.
+State 74 contains 1 reduce/reduce conflict.
 State 83 contains 1 reduce/reduce conflict.
 State 84 contains 1 reduce/reduce conflict.
 State 85 contains 1 reduce/reduce conflict.
@@ -2302,9 +2353,13 @@ State 88 contains 1 reduce/reduce conflict.
 State 89 contains 1 reduce/reduce conflict.
 State 90 contains 1 reduce/reduce conflict.
 State 91 contains 1 reduce/reduce conflict.
-State 111 contains 1 shift/reduce conflict.
-State 123 contains 1 reduce/reduce conflict.
+State 92 contains 1 reduce/reduce conflict.
+State 93 contains 1 reduce/reduce conflict.
+State 94 contains 1 reduce/reduce conflict.
+State 95 contains 1 reduce/reduce conflict.
+State 115 contains 1 shift/reduce conflict.
+State 127 contains 1 reduce/reduce conflict.
 
 
-48 terminals, 28 nonterminals
-69 grammar rules, 135 states
+50 terminals, 29 nonterminals
+72 grammar rules, 140 states

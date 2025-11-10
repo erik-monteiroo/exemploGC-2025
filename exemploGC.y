@@ -10,7 +10,7 @@
 %token WHILE,TRUE, FALSE, IF, ELSE, DO, FOR
 %token EQ, LEQ, GEQ, NEQ 
 %token AND, OR
-%token PLUSPLUS, MINUSMINUS, PLUSEQUAL
+%token PLUSPLUS, MINUSMINUS, PLUSEQUAL, BREAK, CONTINUE
 
 %right '=' 
 %right '?' ':'
@@ -88,9 +88,26 @@ cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 									System.out.println("\tMOVL %EAX, (%EDX)");
 									
 								}
-         
+	| BREAK  ';'{
+					if (pRot.empty()) {
+						yyerror("break fora de laço"); // nao ta num laco
+						} 
+					else {
+						System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1); //pula pro final do laco
+						} 
+				}
+				
+	| CONTINUE ';' {
+					if (pRot.empty()) {
+					yyerror("continue fora de laço"); //o continue da fora de um laco
+					} 
+					else {
+						System.out.printf("\tJMP rot_%02d\n", pRot.peek()+2); //pula de volta pra condicao ou incremento no for
+					}
+				}
+
     | WHILE {
-					pRot.push(proxRot);  proxRot += 2;
+					pRot.push(proxRot);  proxRot += 3;
 					System.out.printf("rot_%02d:\n",pRot.peek());
 				  } 
 			 '(' exp ')' {
@@ -99,23 +116,29 @@ cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 											System.out.printf("\tJE rot_%02d\n", (int)pRot.peek()+1);
 										} 
 				cmd		{
+					    System.out.printf("rot_%02d:\n",(int)pRot.peek()+2);       // o continue continue
 				  		System.out.printf("\tJMP rot_%02d   # terminou cmd na linha de cima\n", pRot.peek());
 							System.out.printf("rot_%02d:\n",(int)pRot.peek()+1);
 							pRot.pop();
 							}  
 
 	| DO {
-			pRot.push(proxRot);  proxRot += 2; 
+			pRot.push(proxRot);  proxRot += 3; 
 			System.out.printf("rot_%02d:\n", pRot.peek());
 			}
 		cmd
-		WHILE '(' exp ')' ';'
-			{
+		WHILE '(' {
+    		System.out.printf("rot_%02d:\n", pRot.peek()+2);   // Endereco pro continue
+			}
+		
+			exp ')' ';' {
 			System.out.println("\tPOPL %EAX    # desvia se falso...");
 			System.out.println("\tCMPL $0, %EAX");
 			System.out.printf("\tJNE rot_%02d\n", (int)pRot.peek()); // volta
+			System.out.printf("rot_%02d:\n", pRot.peek()+1);         // Fim do loop pro break
 			pRot.pop();
 			}
+			
 	| FOR '('{
 		pRot.push(proxRot);  proxRot += 4; // pega o espaco
 		} 
