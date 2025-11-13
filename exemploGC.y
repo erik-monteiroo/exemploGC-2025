@@ -8,9 +8,10 @@
 
 %token ID, INT, FLOAT, BOOL, NUM, LIT, VOID, MAIN, READ, WRITE, IF, ELSE
 %token WHILE,TRUE, FALSE, IF, ELSE, DO, FOR
+%token BREAK, CONTINUE
 %token EQ, LEQ, GEQ, NEQ 
 %token AND, OR
-%token PLUSPLUS, MINUSMINUS, PLUSEQUAL, BREAK, CONTINUE
+%token PLUSPLUS, MINUSMINUS, PLUSEQUAL
 
 %right '=' 
 %right '?' ':'
@@ -88,59 +89,52 @@ cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 									System.out.println("\tMOVL %EAX, (%EDX)");
 									
 								}
-	| BREAK  ';'{
-					if (pRot.empty()) {
-						yyerror("break fora de laço"); // nao ta num laco
-						} 
-					else {
-						System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1); //pula pro final do laco
-						} 
-				}
-				
-	| CONTINUE ';' {
-					if (pRot.empty()) {
-					yyerror("continue fora de laço"); //o continue da fora de um laco
-					} 
-					else {
-						System.out.printf("\tJMP rot_%02d\n", pRot.peek()+2); //pula de volta pra condicao ou incremento no for
-					}
-				}
-
+         
     | WHILE {
-					pRot.push(proxRot);  proxRot += 3;
+					pRot.push(proxRot);  
+					proxRot += 2;
+
+					pBreak.push(pRot.peek() + 1);
+					pContinue.push(pRot.peek());
+
 					System.out.printf("rot_%02d:\n",pRot.peek());
 				  } 
 			 '(' exp ')' {
-			 							System.out.println("\tPOPL %EAX   # desvia se falso...");
-											System.out.println("\tCMPL $0, %EAX");
-											System.out.printf("\tJE rot_%02d\n", (int)pRot.peek()+1);
-										} 
-				cmd		{
-					    System.out.printf("rot_%02d:\n",(int)pRot.peek()+2);       // o continue continue
-				  		System.out.printf("\tJMP rot_%02d   # terminou cmd na linha de cima\n", pRot.peek());
-							System.out.printf("rot_%02d:\n",(int)pRot.peek()+1);
-							pRot.pop();
-							}  
+						System.out.println("\tPOPL %EAX   # desvia se falso...");
+						System.out.println("\tCMPL $0, %EAX");
+						System.out.printf("\tJE rot_%02d\n", (int)pRot.peek()+1);
+				} 
+				cmd	{
+						System.out.printf("\tJMP rot_%02d   # terminou cmd na linha de cima\n", pRot.peek());
+						System.out.printf("rot_%02d:\n",(int)pRot.peek()+1);
+						pRot.pop();
+						pBreak.pop();
+						pContinue.pop();
+				}  
 
 	| DO {
-			pRot.push(proxRot);  proxRot += 3; 
+			pRot.push(proxRot);  
+			proxRot += 2; 
+
+			pBreak.push(pRot.peek() + 2);
+			pContinue.push(pRot.peek() + 2);
+
 			System.out.printf("rot_%02d:\n", pRot.peek());
-			}
+		}
 		cmd
-		WHILE '(' {
-    		System.out.printf("rot_%02d:\n", pRot.peek()+2);   // Endereco pro continue
-			}
-		
-			exp ')' ';' {
+		WHILE '(' exp ')' ';' {
 			System.out.println("\tPOPL %EAX    # desvia se falso...");
 			System.out.println("\tCMPL $0, %EAX");
 			System.out.printf("\tJNE rot_%02d\n", (int)pRot.peek()); // volta
-			System.out.printf("rot_%02d:\n", pRot.peek()+1);         // Fim do loop pro break
 			pRot.pop();
-			}
-			
+			pBreak.pop();
+			pContinue.pop();
+		}
 	| FOR '('{
-		pRot.push(proxRot);  proxRot += 4; // pega o espaco
+			pRot.push(proxRot);  
+			proxRot += 4; // pega o espaco
+			pBreak.push(pRot.peek() + 1);
+			pContinue.push(pRot.peek() + 2);
 		} 
 		
 		FORINICIO ';' { 
@@ -160,9 +154,17 @@ cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 		')' cmd {
 			System.out.printf("\tJMP rot_%02d\n", pRot.peek()+2);  /* vai para post */
         	System.out.printf("rot_%02d:\n", pRot.peek()+1);       /* end: */
-        	pRot.pop();
-		}
 
+        	pRot.pop();
+			pBreak.pop();
+			pContinue.pop();
+		}
+	| BREAK ';' {
+			System.out.printf("\tJMP rot_%02d\n", pBreak.peek()); /* vai pro endereço do final do loop  (tava no topo da pilha) */   
+		}
+	| CONTINUE ';' {
+			System.out.printf("\tJMP rot_%02d\n", pContinue.peek()); /* vai pro endereço do final do loop  (tava no topo da pilha) */   
+		}
 	| IF '(' exp {	
 					pRot.push(proxRot);  proxRot += 2;
 									
@@ -317,6 +319,9 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
   private ArrayList<String> strTab = new ArrayList<String>();
 
   private Stack<Integer> pRot = new Stack<Integer>();
+  private Stack<Integer> pBreak = new Stack<Integer>();
+  private Stack<Integer> pContinue = new Stack<Integer>();
+  
   private int proxRot = 1;
 
 

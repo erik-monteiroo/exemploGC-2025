@@ -80,14 +80,12 @@ read   { return Parser.READ; }
 while   { return Parser.WHILE; }
 do      {return Parser.DO;}
 for {return Parser.FOR;}
-break { return Parser.BREAK;}
-continue {return Parser.CONTINUE;}
 if   { return Parser.IF; }
 else   { return Parser.ELSE; }
 true   { return Parser.TRUE; }
 false   { return Parser.FALSE; }
-
-
+break { return Parser.BREAK; }
+continue { return Parser.CONTINUE; }
 
 
 [a-zA-Z]+([a-zA-Z0-9]+)? { yyparser.yylval = new ParserVal(yytext());
