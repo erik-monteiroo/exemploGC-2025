@@ -113,57 +113,64 @@ cmd :  exp	';' {  System.out.println("\tPOPL %EDX"); }
 				}  
 
 	| DO {
-			pRot.push(proxRot);  
-			proxRot += 2; 
+			pRot.push(proxRot);  //rotulo base
+			proxRot += 2; // reserva mais 2 rotulos pro do while
 
-			pBreak.push(pRot.peek() + 2);
+			//guarda o contexto nas pilhas
+			pBreak.push(pRot.peek() + 2); 
 			pContinue.push(pRot.peek() + 2);
+
 
 			System.out.printf("rot_%02d:\n", pRot.peek());
 		}
 		cmd
 		WHILE '(' exp ')' ';' {
-			System.out.println("\tPOPL %EAX    # desvia se falso...");
-			System.out.println("\tCMPL $0, %EAX");
-			System.out.printf("\tJNE rot_%02d\n", (int)pRot.peek()); // volta
+			System.out.println("\tPOPL %EAX    # desvia se falso..."); // copia o topo da pilha pro EAX
+			System.out.println("\tCMPL $0, %EAX"); // verifica se é 0 (falso)
+			System.out.printf("\tJNE rot_%02d\n", (int)pRot.peek()); //  se for, pula pro inicio do while
+			//limpa o contexto deste 
 			pRot.pop();
 			pBreak.pop();
 			pContinue.pop();
 		}
 	| FOR '('{
 			pRot.push(proxRot);  
-			proxRot += 4; // pega o espaco
-			pBreak.push(pRot.peek() + 1);
+			proxRot += 4; // reserva espaco pros 4 rotulos
+			//adiciona o contexto nas pilhas
+			pBreak.push(pRot.peek() + 1); 
 			pContinue.push(pRot.peek() + 2);
 		} 
 		
 		FORINICIO ';' { 
-			System.out.printf("rot_%02d:\n", pRot.peek()); 
+			System.out.printf("rot_%02d:\n", pRot.peek()); //inicio do for pra voltar depois
 		}
 		
 		FORCONDICAO ';' {
-        	System.out.printf("\tJMP rot_%02d\n", pRot.peek()+3);  
-    		System.out.printf("rot_%02d:\n", pRot.peek()+2);       
+        	System.out.printf("\tJMP rot_%02d\n", pRot.peek()+3); //pula pro fim 
+    		System.out.printf("rot_%02d:\n", pRot.peek()+2);   //marca a parte do incremento (vai precisar?)    
         }
 		
 		FORINCREMENTO {
-			System.out.printf("\tJMP rot_%02d\n", pRot.peek());    /* volta ao begin */
-         	System.out.printf("rot_%02d:\n", pRot.peek()+3); 
+			System.out.printf("\tJMP rot_%02d\n", pRot.peek()); //volta pra reavaliar a condicao   
+         	System.out.printf("rot_%02d:\n", pRot.peek()+3); //marca a parte do inicio do cmd
 		}
 		
 		')' cmd {
-			System.out.printf("\tJMP rot_%02d\n", pRot.peek()+2);  /* vai para post */
-        	System.out.printf("rot_%02d:\n", pRot.peek()+1);       /* end: */
+			System.out.printf("\tJMP rot_%02d\n", pRot.peek()+2); //depois de executar, vai pra parte do incremento
+        	System.out.printf("rot_%02d:\n", pRot.peek()+1);     //marca o rotulo de saóda do for  
 
+			//tira o contexto deste for nas pilhas
         	pRot.pop();
 			pBreak.pop();
 			pContinue.pop();
 		}
 	| BREAK ';' {
-			System.out.printf("\tJMP rot_%02d\n", pBreak.peek()); /* vai pro endereço do final do loop  (tava no topo da pilha) */   
+		//pula direto pro final do loop em que está
+			System.out.printf("\tJMP rot_%02d\n", pBreak.peek());    
 		}
 	| CONTINUE ';' {
-			System.out.printf("\tJMP rot_%02d\n", pContinue.peek()); /* vai pro endereço do final do loop  (tava no topo da pilha) */   
+		//pula direto pro inicio do loop em que esta
+			System.out.printf("\tJMP rot_%02d\n", pContinue.peek());   
 		}
 	| IF '(' exp {	
 					pRot.push(proxRot);  proxRot += 2;
@@ -193,7 +200,7 @@ restoIf : ELSE  {
 			;	
 
 FORINICIO : exp {
-			System.out.println("\tPOPL %EDX");
+			System.out.println("\tPOPL %EDX"); // copia a exp pro registrador
 			}	
 		  | 
 		  ;
@@ -238,39 +245,39 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 		| exp OR exp		{ gcExpLog(OR); }											
 		| exp AND exp		{ gcExpLog(AND); }		
 											
-	    | PLUSPLUS ID {
-					System.out.println("\tPUSHL _" + $2);
-					System.out.println("\tPUSHL $1"); 
-					gcExpArit('+');
-					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $2);
-					System.out.println("\tPUSHL %EDX"); 
+	    | PLUSPLUS ID { //deixa na pilha o valor novo
+					System.out.println("\tPUSHL _" + $2); // empilha o id 
+ 					System.out.println("\tPUSHL $1");  // empilha 1
+					gcExpArit('+'); // soma os 2
+					System.out.println("\tPOPL %EDX"); // pega o valor da pilha e guarda em EDX
+					System.out.println("\tMOVL %EDX, _" + $2); //atribui isso no ID
+					System.out.println("\tPUSHL %EDX"); //empilha o valor dnv pra deixar um valor
 				}
-		| ID PLUSPLUS {
-					System.out.println("\tPUSHL _" + $1);   // empilha o valor ANTIGO  ✔
-					System.out.println("\tPUSHL _" + $1);   // empilha valor p/ modificar
-					System.out.println("\tPUSHL $1");
-					gcExpArit('+');                         // EAX = valor antigo + 1
-					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $1); // atualiza variável
+		| ID PLUSPLUS { //ao contrario do anterior, ele deixa na pilha o valor antigo
+					System.out.println("\tPUSHL _" + $1);   //empilha o id 2 vezes. aqui o antigo valor
+					System.out.println("\tPUSHL _" + $1);   //aqui o vai ser o novo
+					System.out.println("\tPUSHL $1"); // empilha 1 pra somar
+					gcExpArit('+');                         //faz a soma
+					System.out.println("\tPOPL %EDX");		// retira o valor novo e guarda no reg EDX
+					System.out.println("\tMOVL %EDX, _" + $1); // Atualiza o ID com o novo valor
 		}
 
 
-		| MINUSMINUS ID {
-					System.out.println("\tPUSHL _" + $2);
-					System.out.println("\tPUSHL $1"); 
-					gcExpArit('-');
-					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $2);
-					System.out.println("\tPUSHL %EDX"); 
+		| MINUSMINUS ID { //deixa na pilha o novo resultado
+					System.out.println("\tPUSHL _" + $2); //coloca o valor de ID na pilha
+					System.out.println("\tPUSHL $1"); //coloca 1 na pilhja
+					gcExpArit('-');             // faz a subtracao (aqui a ordem importa)
+					System.out.println("\tPOPL %EDX"); //tira o resultado da pilha pro edx
+					System.out.println("\tMOVL %EDX, _" + $2); //atualiza o ID com o novo valor
+					System.out.println("\tPUSHL %EDX"); //devolve o resultado para continuar na pilha
 				}
-		| ID MINUSMINUS {
-					System.out.println("\tPUSHL _" + $1);
+		| ID MINUSMINUS { //deixa na pilha o valor antigo
+					System.out.println("\tPUSHL _" + $1); //empilha o antigo e o que ira ser o novo valor
 					System.out.println("\tPUSHL _" + $1); 
-					System.out.println("\tPUSHL $1"); 
-					gcExpArit('-');
-					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $1);
+					System.out.println("\tPUSHL $1"); // eppilha 1
+					gcExpArit('-');  //subtrai
+					System.out.println("\tPOPL %EDX"); //busca o resultado e armazena em edx
+					System.out.println("\tMOVL %EDX, _" + $1); // atribui o valor de edx pro ID
 				}
 
 		| ID '=' exp	{  
@@ -280,46 +287,47 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 				}
 
 		// a += b; -> a = a + b;
-		| ID PLUSEQUAL exp	{  
-					System.out.println("\tPUSHL _" + $1);
-					gcExpArit('+');
-					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $1);
-					System.out.println("\tPUSHL %EDX"); 
+		| ID PLUSEQUAL exp	{  // a exp é pra ter deixado um valor na pilha, logo
+					System.out.println("\tPUSHL _" + $1); // adiciona ID na pilha
+					gcExpArit('+'); //soma as duas
+					System.out.println("\tPOPL %EDX"); // tira o resultado da pilha pro reg
+					System.out.println("\tMOVL %EDX, _" + $1); // atribui o novo resultado no ID
+					System.out.println("\tPUSHL %EDX");  //deixa dnv o resultado no topo da pilha
 				}
+
+		// a = b > c ? b : c - > if (b>c) {a = b} else {a = c}
 		| exp '?' {
 					// gera dois rótulos novos
-					int rFalse = proxRot++;
-					int rEnd   = proxRot++;
+					int rFalso = proxRot++; //é como se fosse o do else
+					int rFim   = proxRot++; // e aqui é pro final kkkk
 					
-					pCondFalse.push(rFalse);
-					pCondEnd.push(rEnd);
+					//adiciona nas pilhas
+					pCondFalso.push(rFalso);
+					pCondFim.push(rFim);
 
 					// testa o valor da condição (que está no topo da pilha)
-					System.out.println("\tPOPL %EAX");
-					System.out.println("\tCMPL $0, %EAX");
-					System.out.printf("\tJE rot_%02d\n", rFalse); // se 0 -> vai para ramo falso
+					System.out.println("\tPOPL %EAX"); // pega o valor e coloca em EAX
+					System.out.println("\tCMPL $0, %EAX"); // verifica se é 0 (falso)
+					System.out.printf("\tJE rot_%02d\n", rFalso); // se for falso vai para ramo falso
 				}
 			exp	{
-					// acabou de gerar o código do ramo "verdadeiro"
-					int rFalse = pCondFalse.peek();
-					int rEnd   = pCondEnd.peek();
+					// aqui é o camninho verdadeiro
+					//da uma olhadinha no topo das pilhas os valores deste contexto
+					int rFalso = pCondFalso.peek();
+					int rFim   = pCondFim.peek();
 
 					// pula o ramo falso
-					System.out.printf("\tJMP rot_%02d\n", rEnd);
+					System.out.printf("\tJMP rot_%02d\n", rFim);
 					// marca início do ramo falso
-					System.out.printf("rot_%02d:\n", rFalse);
+					System.out.printf("rot_%02d:\n", rFalso);
 				}
 			':' exp
 				{
-					// terminou de gerar o ramo falso
-					int rEnd = pCondEnd.pop();
-					pCondFalse.pop();
-
+					// tira os rotulos deste contexto da pilha
+					int rFim = pCondFim.pop();
+					pCondFalso.pop();
 					// marca o final do operador condicional
-					System.out.printf("rot_%02d:\n", rEnd);
-					// OBS: em qualquer caminho (true/false) fica 1 valor na pilha,
-					// que é o resultado da expressão condicional.
+					System.out.printf("rot_%02d:\n", rFim);
 				}
 					
 
@@ -337,8 +345,8 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
   private Stack<Integer> pRot = new Stack<Integer>();
   
   // pilhas pro :?
-  private Stack<Integer> pCondFalse = new Stack<Integer>();
-  private Stack<Integer> pCondEnd   = new Stack<Integer>();
+  private Stack<Integer> pCondFalso = new Stack<Integer>();
+  private Stack<Integer> pCondFim   = new Stack<Integer>();
 
   
   //pilhas pro brack e continue
