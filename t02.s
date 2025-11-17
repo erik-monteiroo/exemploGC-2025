@@ -7,17 +7,34 @@
 
 
 _start:
-	PUSHL $10
+	PUSHL $1
 	POPL %EDX
 	PUSHL %EDX
-	MOVL %EDX, _a
-	POPL %EDX
-	PUSHL $2
+	MOVL %EDX, _c
 	POPL %EDX
 	PUSHL %EDX
 	MOVL %EDX, _b
 	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _a
+	POPL %EDX
+	PUSHL $5
+	PUSHL _c
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _c
+	PUSHL %EDX
 	PUSHL _b
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _b
+	PUSHL %EDX
 	PUSHL _a
 	POPL %EBX
 	POPL %EAX
@@ -38,6 +55,68 @@ _start:
 	MOVL $_str_1, %ECX
 	CALL _writeLit
 	PUSHL _b
+	POPL %EAX
+	CALL _write
+	CALL _writeln
+	MOVL $_str_2Len, %EDX
+	MOVL $_str_2, %ECX
+	CALL _writeLit
+	PUSHL _c
+	POPL %EAX
+	CALL _write
+	CALL _writeln
+	PUSHL $1
+	PUSHL _a
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _a
+	PUSHL %EDX
+	POPL %EDX
+	PUSHL $2
+	PUSHL _b
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _b
+	PUSHL %EDX
+	POPL %EDX
+	PUSHL $3
+	PUSHL _c
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _c
+	PUSHL %EDX
+	POPL %EDX
+	MOVL $_str_3Len, %EDX
+	MOVL $_str_3, %ECX
+	CALL _writeLit
+	CALL _writeln
+	MOVL $_str_4Len, %EDX
+	MOVL $_str_4, %ECX
+	CALL _writeLit
+	PUSHL _a
+	POPL %EAX
+	CALL _write
+	CALL _writeln
+	MOVL $_str_5Len, %EDX
+	MOVL $_str_5, %ECX
+	CALL _writeLit
+	PUSHL _b
+	POPL %EAX
+	CALL _write
+	CALL _writeln
+	MOVL $_str_6Len, %EDX
+	MOVL $_str_6, %ECX
+	CALL _writeLit
+	PUSHL _c
 	POPL %EAX
 	CALL _write
 	CALL _writeln
@@ -147,8 +226,23 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii " a =  "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "b: "
+	 .ascii " b =  "
 _str_1Len = . - _str_1
+_str_2:
+	 .ascii " c =  "
+_str_2Len = . - _str_2
+_str_3:
+	 .ascii " "
+_str_3Len = . - _str_3
+_str_4:
+	 .ascii " a =  "
+_str_4Len = . - _str_4
+_str_5:
+	 .ascii " b =  "
+_str_5Len = . - _str_5
+_str_6:
+	 .ascii " c =  "
+_str_6Len = . - _str_6

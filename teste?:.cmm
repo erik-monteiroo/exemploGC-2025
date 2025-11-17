@@ -1,17 +1,12 @@
-$TRACE_OFF
-
 int a;
-int b;
-int c;
+int x;
+int y;
 
 void main() {
     a = 10;
-    b = 3;
-    c = 3;
-    a == 9 ? b = 7 : b = 2;
-    a == 10 ? c = 7 : c = 2;
+    x = a > 9 ?  7 : 2;
+    y = a < 9 ?  7 : 2;
 
-    write("a: ", a);
-    write("b: ", b);
-    write("c: ", c);
+    write("x: ", x);
+    write("y: ", y);
 }

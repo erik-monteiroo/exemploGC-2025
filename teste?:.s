@@ -12,15 +12,25 @@ _start:
 	PUSHL %EDX
 	MOVL %EDX, _a
 	POPL %EDX
-	PUSHL $3
+	PUSHL _a
+	PUSHL $9
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETG  %AL
+	PUSHL %EAX
+	POPL %EAX
+	CMPL $0, %EAX
+	JE rot_01
+	PUSHL $7
+	JMP rot_02
+rot_01:
+	PUSHL $2
+rot_02:
 	POPL %EDX
 	PUSHL %EDX
-	MOVL %EDX, _b
-	POPL %EDX
-	PUSHL $3
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _c
+	MOVL %EDX, _x
 	POPL %EDX
 	PUSHL _a
 	PUSHL $9
@@ -28,68 +38,31 @@ _start:
 	POPL %EDX
 	CMPL %EAX, %EDX
 	MOVL $0, %EAX
-	SETE  %AL
-	PUSHL %EAX
-	POPL %EAX
-	CMPL $0, %EAX
-	JE rot_01
-	PUSHL $7
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _b
-	JMP rot_02
-rot_01:
-	PUSHL $2
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _b
-	POPL %EAX
-rot_02:
-	PUSHL %EAX
-	POPL %EDX
-	PUSHL _a
-	PUSHL $10
-	POPL %EAX
-	POPL %EDX
-	CMPL %EAX, %EDX
-	MOVL $0, %EAX
-	SETE  %AL
+	SETL  %AL
 	PUSHL %EAX
 	POPL %EAX
 	CMPL $0, %EAX
 	JE rot_03
 	PUSHL $7
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _c
 	JMP rot_04
 rot_03:
 	PUSHL $2
+rot_04:
 	POPL %EDX
 	PUSHL %EDX
-	MOVL %EDX, _c
-	POPL %EAX
-rot_04:
-	PUSHL %EAX
+	MOVL %EDX, _y
 	POPL %EDX
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
 	CALL _writeLit
-	PUSHL _a
+	PUSHL _x
 	POPL %EAX
 	CALL _write
 	CALL _writeln
 	MOVL $_str_1Len, %EDX
 	MOVL $_str_1, %ECX
 	CALL _writeLit
-	PUSHL _b
-	POPL %EAX
-	CALL _write
-	CALL _writeln
-	MOVL $_str_2Len, %EDX
-	MOVL $_str_2, %ECX
-	CALL _writeLit
-	PUSHL _c
+	PUSHL _y
 	POPL %EAX
 	CALL _write
 	CALL _writeln
@@ -186,8 +159,8 @@ _fimread2:
 # variaveis globais
 #
 _a:	.zero 4
-_b:	.zero 4
-_c:	.zero 4
+_x:	.zero 4
+_y:	.zero 4
 
 #
 # area de literais
@@ -199,11 +172,8 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii "x: "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "b: "
+	 .ascii "y: "
 _str_1Len = . - _str_1
-_str_2:
-	 .ascii "c: "
-_str_2Len = . - _str_2

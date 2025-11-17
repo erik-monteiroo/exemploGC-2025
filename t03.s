@@ -7,58 +7,37 @@
 
 
 _start:
-	PUSHL $10
+	PUSHL $1
 	POPL %EDX
+	PUSHL %EDX
 	MOVL %EDX, _a
-	PUSHL $10
 	POPL %EDX
-	MOVL %EDX, _b
+	PUSHL _a
 	PUSHL _a
 	PUSHL $1
 	POPL %EBX
 	POPL %EAX
-	SUBL %EBX, %EAX
+	ADDL %EBX, %EAX
 	PUSHL %EAX
 	POPL %EDX
 	MOVL %EDX, _a
-	PUSHL %EDX
-	PUSHL _b
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	SUBL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _b
-	PUSHL %EDX
-	POPL %EBX
-	POPL %EAX
-	SUBL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _c
 	PUSHL _a
 	PUSHL $1
 	POPL %EBX
 	POPL %EAX
-	SUBL %EBX, %EAX
+	ADDL %EBX, %EAX
 	PUSHL %EAX
 	POPL %EDX
 	MOVL %EDX, _a
 	PUSHL %EDX
-	POPL %EDX
-	MOVL %EDX, _a
-	PUSHL _b
-	PUSHL $1
 	POPL %EBX
 	POPL %EAX
-	SUBL %EBX, %EAX
+	ADDL %EBX, %EAX
 	PUSHL %EAX
 	POPL %EDX
-	MOVL %EDX, _b
 	PUSHL %EDX
+	MOVL %EDX, _a
 	POPL %EDX
-	MOVL %EDX, _b
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
 	CALL _writeLit
@@ -66,15 +45,89 @@ _start:
 	POPL %EAX
 	CALL _write
 	CALL _writeln
+	PUSHL $1
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _a
+	POPL %EDX
+	PUSHL _a
+	PUSHL _a
+	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _a
+	PUSHL _a
+	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _a
+	PUSHL %EDX
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	PUSHL _a
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _a
+	PUSHL %EDX
+	POPL %EDX
 	MOVL $_str_1Len, %EDX
 	MOVL $_str_1, %ECX
+	CALL _writeLit
+	PUSHL _a
+	POPL %EAX
+	CALL _write
+	CALL _writeln
+	PUSHL $10
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _b
+	POPL %EDX
+	PUSHL _b
+	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	SUBL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _b
+	PUSHL %EDX
+	PUSHL _b
+	PUSHL _b
+	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	SUBL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _b
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _c
+	POPL %EDX
+	MOVL $_str_2Len, %EDX
+	MOVL $_str_2, %ECX
 	CALL _writeLit
 	PUSHL _b
 	POPL %EAX
 	CALL _write
 	CALL _writeln
-	MOVL $_str_2Len, %EDX
-	MOVL $_str_2, %ECX
+	MOVL $_str_3Len, %EDX
+	MOVL $_str_3, %ECX
 	CALL _writeLit
 	PUSHL _c
 	POPL %EAX
@@ -186,11 +239,14 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii " a =  "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "b: "
+	 .ascii " a =  "
 _str_1Len = . - _str_1
 _str_2:
-	 .ascii "c: "
+	 .ascii " b =  "
 _str_2Len = . - _str_2
+_str_3:
+	 .ascii " c =  "
+_str_3Len = . - _str_3

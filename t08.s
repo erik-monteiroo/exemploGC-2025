@@ -7,38 +7,34 @@
 
 
 _start:
-	PUSHL $10
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _c
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _b
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _a
-	POPL %EDX
+rot_01:
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
 	CALL _writeLit
-	PUSHL _a
-	POPL %EAX
-	CALL _write
 	CALL _writeln
+	PUSHL $_num
+	CALL _read
+	POPL %EDX
+	MOVL %EAX, (%EDX)
 	MOVL $_str_1Len, %EDX
 	MOVL $_str_1, %ECX
 	CALL _writeLit
-	PUSHL _b
+	PUSHL _num
 	POPL %EAX
 	CALL _write
 	CALL _writeln
-	MOVL $_str_2Len, %EDX
-	MOVL $_str_2, %ECX
-	CALL _writeLit
-	PUSHL _c
+		# terminou o bloco...
+	PUSHL _num
+	PUSHL $0
 	POPL %EAX
-	CALL _write
-	CALL _writeln
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETG  %AL
+	PUSHL %EAX
+	POPL %EAX    # desvia se falso...
+	CMPL $0, %EAX
+	JNE rot_01
 
 
 
@@ -131,9 +127,7 @@ _fimread2:
 #
 # variaveis globais
 #
-_a:	.zero 4
-_b:	.zero 4
-_c:	.zero 4
+_num:	.zero 4
 
 #
 # area de literais
@@ -145,11 +139,8 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii "Informe um numero <= 0: "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "b: "
+	 .ascii "Valor lido: "
 _str_1Len = . - _str_1
-_str_2:
-	 .ascii "c: "
-_str_2Len = . - _str_2

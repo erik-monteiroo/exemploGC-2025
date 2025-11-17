@@ -247,13 +247,14 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 					System.out.println("\tPUSHL %EDX"); 
 				}
 		| ID PLUSPLUS {
-					System.out.println("\tPUSHL _" + $1);
-					System.out.println("\tPUSHL $1"); 
-					gcExpArit('+');
+					System.out.println("\tPUSHL _" + $1);   // empilha o valor ANTIGO  ✔
+					System.out.println("\tPUSHL _" + $1);   // empilha valor p/ modificar
+					System.out.println("\tPUSHL $1");
+					gcExpArit('+');                         // EAX = valor antigo + 1
 					System.out.println("\tPOPL %EDX");
-					System.out.println("\tMOVL %EDX, _" + $1);
-					System.out.println("\tPUSHL %EDX"); 
-				}
+					System.out.println("\tMOVL %EDX, _" + $1); // atualiza variável
+		}
+
 
 		| MINUSMINUS ID {
 					System.out.println("\tPUSHL _" + $2);
@@ -265,11 +266,11 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 				}
 		| ID MINUSMINUS {
 					System.out.println("\tPUSHL _" + $1);
+					System.out.println("\tPUSHL _" + $1); 
 					System.out.println("\tPUSHL $1"); 
 					gcExpArit('-');
 					System.out.println("\tPOPL %EDX");
 					System.out.println("\tMOVL %EDX, _" + $1);
-					System.out.println("\tPUSHL %EDX"); 
 				}
 
 		| ID '=' exp	{  
@@ -286,27 +287,41 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
 					System.out.println("\tMOVL %EDX, _" + $1);
 					System.out.println("\tPUSHL %EDX"); 
 				}
+		| exp '?' {
+					// gera dois rótulos novos
+					int rFalse = proxRot++;
+					int rEnd   = proxRot++;
+					
+					pCondFalse.push(rFalse);
+					pCondEnd.push(rEnd);
 
-		// a == 10 ? b = -5 : b = -10;
-		// exp ? cmd : cmd
-		// if (a == 10) { b = -5; } else { b = -10; }
-		| exp {	
-					pRot.push(proxRot);  proxRot += 2; 			
-					System.out.println("\tPOPL %EAX"); //pega o resultado da primeira exp
-					System.out.println("\tCMPL $0, %EAX"); //verifica se é falso (igual a 0)
-					System.out.printf("\tJE rot_%02d\n", pRot.peek()); //se for pula pro segundo comando, se nao mantem a sequencia
-				} 
-			'?' exp { //se manteve a sequencia (foi verdadeiro)
-					System.out.printf("\tJMP rot_%02d\n", pRot.peek()+1);
-					System.out.printf("rot_%02d:\n",pRot.peek());
-					}
-			':' exp { //se pulou pra ca (foi falso)
-			        System.out.println("\tPOPL %EAX");                       // EAX = valor_true
-					System.out.printf("rot_%02d:\n",pRot.peek()+1);
-			        System.out.println("\tPUSHL %EAX");         // **deixa o valor da exp na pilha**
-					pRot.pop();
-					}
-		;							
+					// testa o valor da condição (que está no topo da pilha)
+					System.out.println("\tPOPL %EAX");
+					System.out.println("\tCMPL $0, %EAX");
+					System.out.printf("\tJE rot_%02d\n", rFalse); // se 0 -> vai para ramo falso
+				}
+			exp	{
+					// acabou de gerar o código do ramo "verdadeiro"
+					int rFalse = pCondFalse.peek();
+					int rEnd   = pCondEnd.peek();
+
+					// pula o ramo falso
+					System.out.printf("\tJMP rot_%02d\n", rEnd);
+					// marca início do ramo falso
+					System.out.printf("rot_%02d:\n", rFalse);
+				}
+			':' exp
+				{
+					// terminou de gerar o ramo falso
+					int rEnd = pCondEnd.pop();
+					pCondFalse.pop();
+
+					// marca o final do operador condicional
+					System.out.printf("rot_%02d:\n", rEnd);
+					// OBS: em qualquer caminho (true/false) fica 1 valor na pilha,
+					// que é o resultado da expressão condicional.
+				}
+					
 
 
 %%
@@ -318,10 +333,19 @@ exp :  NUM  { System.out.println("\tPUSHL $"+$1); }
   private int strCount = 0;
   private ArrayList<String> strTab = new ArrayList<String>();
 
+ //pilha original
   private Stack<Integer> pRot = new Stack<Integer>();
+  
+  // pilhas pro :?
+  private Stack<Integer> pCondFalse = new Stack<Integer>();
+  private Stack<Integer> pCondEnd   = new Stack<Integer>();
+
+  
+  //pilhas pro brack e continue
   private Stack<Integer> pBreak = new Stack<Integer>();
   private Stack<Integer> pContinue = new Stack<Integer>();
-  
+
+
   private int proxRot = 1;
 
 

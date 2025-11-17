@@ -10,45 +10,122 @@ _start:
 	PUSHL $0
 	POPL %EDX
 	PUSHL %EDX
-	MOVL %EDX, _a
+	MOVL %EDX, _i
 	POPL %EDX
 rot_01:
+	PUSHL $1
+	POPL %EAX   # desvia se falso...
+	CMPL $0, %EAX
+	JE rot_02
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
 	CALL _writeLit
-	PUSHL _a
+	CALL _writeln
+	MOVL $_str_1Len, %EDX
+	MOVL $_str_1, %ECX
+	CALL _writeLit
+	PUSHL _i
 	POPL %EAX
 	CALL _write
 	CALL _writeln
-	PUSHL _a
+	PUSHL _i
+	PUSHL $3
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETG  %AL
+	PUSHL %EAX
+	POPL %EAX
+	CMPL $0, %EAX
+	JE rot_03
+	JMP rot_02
+	JMP rot_04
+rot_03:
+rot_04:
+	PUSHL $0
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _j
+	POPL %EDX
+rot_05:
+	PUSHL _j
+	PUSHL $6
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETLE %AL
+	PUSHL %EAX
+	POPL %EAX   # desvia se falso...
+	CMPL $0, %EAX
+	JE rot_06
+	PUSHL _j
+	PUSHL _j
 	PUSHL $1
 	POPL %EBX
 	POPL %EAX
 	ADDL %EBX, %EAX
 	PUSHL %EAX
 	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _a
+	MOVL %EDX, _j
 	POPL %EDX
-		# terminou o bloco...
-	PUSHL _a
-	PUSHL $3
+	PUSHL _j
+	PUSHL $2
 	POPL %EAX
 	POPL %EDX
 	CMPL %EAX, %EDX
 	MOVL $0, %EAX
 	SETL  %AL
 	PUSHL %EAX
-	POPL %EAX    # desvia se falso...
+	PUSHL _j
+	PUSHL $4
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETG  %AL
+	PUSHL %EAX
+	POPL %EDX
+	POPL %EAX
 	CMPL $0, %EAX
-	JNE rot_01
-	MOVL $_str_1Len, %EDX
-	MOVL $_str_1, %ECX
+	MOVL $0, %EAX
+	SETNE %AL
+	CMPL $0, %EDX
+	MOVL $0, %EDX
+	SETNE %DL
+	ORL  %EDX, %EAX
+	PUSHL %EAX
+	POPL %EAX
+	CMPL $0, %EAX
+	JE rot_07
+	JMP rot_05
+	JMP rot_08
+rot_07:
+rot_08:
+	MOVL $_str_2Len, %EDX
+	MOVL $_str_2, %ECX
 	CALL _writeLit
-	PUSHL _a
+	PUSHL _j
 	POPL %EAX
 	CALL _write
 	CALL _writeln
+		# terminou o bloco...
+	JMP rot_05   # terminou cmd na linha de cima
+rot_06:
+	PUSHL _i
+	PUSHL _i
+	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _i
+	POPL %EDX
+		# terminou o bloco...
+	JMP rot_01   # terminou cmd na linha de cima
+rot_02:
 
 
 
@@ -141,7 +218,8 @@ _fimread2:
 #
 # variaveis globais
 #
-_a:	.zero 4
+_i:	.zero 4
+_j:	.zero 4
 
 #
 # area de literais
@@ -153,8 +231,11 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii " "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "fim, a = "
+	 .ascii "i: "
 _str_1Len = . - _str_1
+_str_2:
+	 .ascii "   j: "
+_str_2Len = . - _str_2

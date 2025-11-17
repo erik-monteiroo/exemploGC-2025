@@ -7,139 +7,85 @@
 
 
 _start:
+	PUSHL $10
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _a
+	POPL %EDX
+	PUSHL $11
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _b
+	POPL %EDX
+	PUSHL $9
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _c
+	POPL %EDX
+	PUSHL _a
+	PUSHL _b
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETLE %AL
+	PUSHL %EAX
+	PUSHL _a
+	PUSHL _c
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETLE %AL
+	PUSHL %EAX
+	POPL %EDX
+	POPL %EAX
+	CMPL $0, %EAX
+	MOVL $0, %EAX
+	SETNE %AL
+	CMPL $0, %EDX
+	MOVL $0, %EDX
+	SETNE %DL
+	ANDL  %EDX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _x
+	POPL %EDX
+	PUSHL _b
+	PUSHL _c
+	POPL %EAX
+	POPL %EDX
+	CMPL %EAX, %EDX
+	MOVL $0, %EAX
+	SETLE %AL
+	PUSHL %EAX
+	POPL %EDX
+	PUSHL %EDX
+	MOVL %EDX, _y
+	POPL %EAX
+	CMPL $0, %EAX
+	JE rot_01
+	PUSHL _b
+	JMP rot_02
+rot_01:
+	PUSHL _c
+rot_02:
+	POPL %EDX
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
 	CALL _writeLit
+	PUSHL _x
+	POPL %EAX
+	CALL _write
 	CALL _writeln
-	PUSHL $0
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _i
-	POPL %EDX
-rot_01:
-	PUSHL _i
-	PUSHL $3
-	POPL %EAX
-	POPL %EDX
-	CMPL %EAX, %EDX
-	MOVL $0, %EAX
-	SETL  %AL
-	PUSHL %EAX
-	POPL %EAX
-	CMPL $0, %EAX
-	JE rot_02
-	JMP rot_04
-rot_03:
-	PUSHL _i
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _i
-	POPL %EDX
-	JMP rot_01
-rot_04:
 	MOVL $_str_1Len, %EDX
 	MOVL $_str_1, %ECX
 	CALL _writeLit
-	PUSHL _i
+	PUSHL _y
 	POPL %EAX
 	CALL _write
 	CALL _writeln
-	JMP rot_03
-rot_02:
-	MOVL $_str_2Len, %EDX
-	MOVL $_str_2, %ECX
-	CALL _writeLit
-	CALL _writeln
-	PUSHL $0
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _i
-	POPL %EDX
-rot_05:
-	PUSHL _i
-	PUSHL $2
-	POPL %EAX
-	POPL %EDX
-	CMPL %EAX, %EDX
-	MOVL $0, %EAX
-	SETL  %AL
-	PUSHL %EAX
-	POPL %EAX
-	CMPL $0, %EAX
-	JE rot_06
-	JMP rot_08
-rot_07:
-	PUSHL _i
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _i
-	POPL %EDX
-	JMP rot_05
-rot_08:
-	MOVL $_str_3Len, %EDX
-	MOVL $_str_3, %ECX
-	CALL _writeLit
-	PUSHL _i
-	POPL %EAX
-	CALL _write
-	CALL _writeln
-	JMP rot_07
-rot_06:
-	MOVL $_str_4Len, %EDX
-	MOVL $_str_4, %ECX
-	CALL _writeLit
-	CALL _writeln
-	PUSHL $0
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _i
-	POPL %EDX
-rot_09:
-	PUSHL _i
-	PUSHL $3
-	POPL %EAX
-	POPL %EDX
-	CMPL %EAX, %EDX
-	MOVL $0, %EAX
-	SETL  %AL
-	PUSHL %EAX
-	POPL %EAX
-	CMPL $0, %EAX
-	JE rot_10
-	JMP rot_12
-rot_11:
-	JMP rot_09
-rot_12:
-	MOVL $_str_5Len, %EDX
-	MOVL $_str_5, %ECX
-	CALL _writeLit
-	PUSHL _i
-	POPL %EAX
-	CALL _write
-	CALL _writeln
-	PUSHL _i
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _i
-	POPL %EDX
-		# terminou o bloco...
-	JMP rot_11
-rot_10:
 
 
 
@@ -232,7 +178,11 @@ _fimread2:
 #
 # variaveis globais
 #
-_i:	.zero 4
+_a:	.zero 4
+_b:	.zero 4
+_c:	.zero 4
+_x:	.zero 4
+_y:	.zero 4
 
 #
 # area de literais
@@ -244,20 +194,8 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "FOR COMPLETO"
+	 .ascii "me = "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "i: "
+	 .ascii "ma = "
 _str_1Len = . - _str_1
-_str_2:
-	 .ascii "FOR SEM INICIO"
-_str_2Len = . - _str_2
-_str_3:
-	 .ascii "i: "
-_str_3Len = . - _str_3
-_str_4:
-	 .ascii "FOR SEM INCREMENTO"
-_str_4Len = . - _str_4
-_str_5:
-	 .ascii "i: "
-_str_5Len = . - _str_5

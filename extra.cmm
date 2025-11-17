@@ -1,0 +1,17 @@
+int a;
+int b;
+int c;
+int x;
+int y;
+
+void main() {
+    a = 10;
+    b = 11;
+    c = 9;
+
+    x = a<=b && a<=c;
+    y = b <= c ? b : c;
+
+    write("me = ", x);
+    write("ma = ", y);
+}

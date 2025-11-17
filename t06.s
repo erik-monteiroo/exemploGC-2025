@@ -12,7 +12,15 @@ _start:
 	PUSHL %EDX
 	MOVL %EDX, _a
 	POPL %EDX
+	PUSHL _a
+	PUSHL _a
 	PUSHL $1
+	POPL %EBX
+	POPL %EAX
+	ADDL %EBX, %EAX
+	PUSHL %EAX
+	POPL %EDX
+	MOVL %EDX, _a
 	POPL %EDX
 	PUSHL %EDX
 	MOVL %EDX, _b
@@ -27,6 +35,7 @@ _start:
 	MOVL %EDX, _a
 	PUSHL %EDX
 	PUSHL _b
+	PUSHL _b
 	PUSHL $1
 	POPL %EBX
 	POPL %EAX
@@ -34,7 +43,6 @@ _start:
 	PUSHL %EAX
 	POPL %EDX
 	MOVL %EDX, _b
-	PUSHL %EDX
 	POPL %EBX
 	POPL %EAX
 	ADDL %EBX, %EAX
@@ -43,31 +51,15 @@ _start:
 	PUSHL %EDX
 	MOVL %EDX, _c
 	POPL %EDX
-	PUSHL _a
+	PUSHL _c
 	PUSHL $1
 	POPL %EBX
 	POPL %EAX
-	ADDL %EBX, %EAX
+	SUBL %EBX, %EAX
 	PUSHL %EAX
 	POPL %EDX
-	MOVL %EDX, _a
+	MOVL %EDX, _c
 	PUSHL %EDX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _a
-	POPL %EDX
-	PUSHL _b
-	PUSHL $1
-	POPL %EBX
-	POPL %EAX
-	ADDL %EBX, %EAX
-	PUSHL %EAX
-	POPL %EDX
-	MOVL %EDX, _b
-	PUSHL %EDX
-	POPL %EDX
-	PUSHL %EDX
-	MOVL %EDX, _b
 	POPL %EDX
 	MOVL $_str_0Len, %EDX
 	MOVL $_str_0, %ECX
@@ -196,11 +188,11 @@ __fim_msg:
 
 
 _str_0:
-	 .ascii "a: "
+	 .ascii " a =  "
 _str_0Len = . - _str_0
 _str_1:
-	 .ascii "b: "
+	 .ascii " b =  "
 _str_1Len = . - _str_1
 _str_2:
-	 .ascii "c: "
+	 .ascii " c =  "
 _str_2Len = . - _str_2
